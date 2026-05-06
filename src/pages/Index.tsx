@@ -86,62 +86,23 @@ export default function Index() {
           </div>
         </div>
 
-        {/* PLAYER */}
+        {/* PLAYER COMING SOON */}
         <section id="player" className="section-padding" style={{ background: "var(--dark)" }}>
-          <div style={{ maxWidth: 800, margin: "0 auto" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                marginBottom: 24,
-              }}
-            >
-              <span
-                style={{
-                  width: 12,
-                  height: 12,
-                  borderRadius: "50%",
-                  background: "#e53e3e",
-                  display: "inline-block",
-                  boxShadow: "0 0 8px #e53e3e",
-                  animation: "pulse 1.5s infinite",
-                }}
-              />
-              <span
-                style={{
-                  color: "white",
-                  fontFamily: "Unbounded, sans-serif",
-                  fontWeight: 800,
-                  fontSize: 14,
-                  textTransform: "uppercase",
-                  letterSpacing: 2,
-                }}
-              >
-                В эфире сейчас: {currentShow.title}
-              </span>
-            </div>
-
-            <div className="player-wrapper">
-              <iframe
-                src="https://www.youtube.com/embed/live_stream?channel=UCxxxxxxxxxxxxxx&autoplay=1"
-                title="GOLDTV Live"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-                style={{ width: "100%", height: "100%", border: "none" }}
-              />
-            </div>
-
-            <p
-              style={{
-                color: "#888",
-                fontSize: 13,
-                marginTop: 12,
-                textAlign: "center",
-              }}
-            >
-              Укажи ссылку на свой YouTube-канал или HLS-поток — и эфир заработает здесь
+          <div className="player-soon">
+            <div className="player-soon-icon">📺</div>
+            <h2 style={{ fontFamily: "Unbounded, sans-serif", color: "white", fontSize: 28, fontWeight: 800, marginBottom: 12, textTransform: "uppercase" }}>
+              Эфир скоро запустится
+            </h2>
+            <p style={{ color: "#888", fontSize: 16, maxWidth: 400, lineHeight: 1.6 }}>
+              Мы готовим прямой эфир GOLDTV. Следите за обновлениями — скоро музыка зазвучит здесь!
             </p>
+            <div style={{ display: "flex", gap: 8, marginTop: 24, justifyContent: "center", flexWrap: "wrap" }}>
+              {["70-е", "80-е", "90-е", "24/7", "Ностальгия"].map((tag) => (
+                <span key={tag} style={{ background: "var(--primary)", color: "white", padding: "4px 14px", fontWeight: 800, fontSize: 13, border: "2px solid var(--primary)" }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         </section>
 
