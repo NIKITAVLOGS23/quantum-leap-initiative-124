@@ -1,28 +1,171 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
-const SCHEDULE = [
-  { time: "06:00", title: "Золотое утро", desc: "Хиты 70-х для лёгкого старта дня" },
-  { time: "09:00", title: "Диско-волна", desc: "Лучшие танцевальные треки эпохи" },
-  { time: "12:00", title: "Рок-полдень", desc: "Классический рок — Beatles, Deep Purple, Uriah Heep" },
-  { time: "15:00", title: "Синти-поп 80-х", desc: "Нeon-эстетика и электронные ритмы" },
-  { time: "18:00", title: "Прайм-тайм: Легенды", desc: "Культовые клипы и живые концерты" },
-  { time: "21:00", title: "Ностальгия 90-х", desc: "Поп и R&B, которые мы помним" },
-  { time: "00:00", title: "Ночной эфир", desc: "Медленные хиты и джаз до рассвета" },
+const WEEK = [
+  {
+    day: "Пн", date: "6.07",
+    shows: [
+      { time: "00:00", title: "Золотой Запас" },
+      { time: "02:00", title: "Полуночники" },
+      { time: "06:00", title: "Утренний Будильник" },
+      { time: "08:00", title: "100% Летний Хит" },
+      { time: "09:00", title: "Танцевальный Чарт" },
+      { time: "10:00", title: "Победитель Битвы" },
+      { time: "10:30", title: "Угадай клип по году" },
+      { time: "11:40", title: "Топ–10: Лето" },
+      { time: "12:20", title: "Хип–Хоп: 2000!" },
+      { time: "13:15", title: "Капсула Времени" },
+      { time: "14:05", title: "Non-stop: 10-е" },
+      { time: "15:00", title: "Битва исполнителей: Britney Spears VS. Christina Aguilera" },
+      { time: "16:00", title: "Dancefloor" },
+      { time: "17:00", title: "Гламурные 00е" },
+      { time: "19:00", title: "Золотой пьедестал" },
+      { time: "20:00", title: "Non-Stop 00е" },
+      { time: "22:00", title: "Dancefloor files" },
+    ],
+  },
+  {
+    day: "Вт", date: "7.07",
+    shows: [
+      { time: "00:00", title: "Золотая Шкатулка" },
+      { time: "03:00", title: "Полуночники" },
+      { time: "06:00", title: "Утренний Будильник" },
+      { time: "08:00", title: "Русские Файлы: 2000" },
+      { time: "09:00", title: "Non Stop 90-е" },
+      { time: "10:00", title: "Победитель битвы" },
+      { time: "10:30", title: "Топ–10: лучших клипов дня" },
+      { time: "11:10", title: "Золотая Шкатулка" },
+      { time: "14:00", title: "Капсула Времени" },
+      { time: "15:00", title: "Битва исполнителей: Гости из будущего VS. Иванушки" },
+      { time: "16:00", title: "Хип–Хоп: 2001" },
+      { time: "17:00", title: "Гламурные 00е" },
+      { time: "19:00", title: "Назад в 2001-й!" },
+      { time: "20:00", title: "Non Stop 00–е" },
+      { time: "22:00", title: "Топ–30: Золото недели" },
+    ],
+  },
+  {
+    day: "Ср", date: "8.07",
+    shows: [
+      { time: "00:00", title: "Золотой Запас" },
+      { time: "02:00", title: "Полуночники" },
+      { time: "05:00", title: "Non–Stop: 90е" },
+      { time: "07:00", title: "Утренний Будильник" },
+      { time: "09:00", title: "Русские Файлы: 2001" },
+      { time: "10:00", title: "Победитель битвы" },
+      { time: "10:30", title: "Миллениалы VS Бумеры" },
+      { time: "11:30", title: "Топ–10: Лучших клипов дня" },
+      { time: "12:10", title: "Назад в 2002!" },
+      { time: "14:00", title: "Капсула Времени" },
+      { time: "15:00", title: "Битва исполнителей: Pussycat Dolls VS. Destiny's Child" },
+      { time: "16:00", title: "Крутой Хит" },
+      { time: "17:00", title: "Золотая шкатулка" },
+      { time: "19:00", title: "Золотой пьедестал" },
+      { time: "20:00", title: "Non–Stop: 00е" },
+      { time: "22:00", title: "Dance Chart 2010" },
+      { time: "23:00", title: "Flashbacks: 2021" },
+    ],
+  },
+  {
+    day: "Чт", date: "9.07",
+    shows: [
+      { time: "00:00", title: "Золотая Шкатулка" },
+      { time: "02:00", title: "Полуночники" },
+      { time: "05:00", title: "Dancefloor" },
+      { time: "07:00", title: "Утренний Будильник" },
+      { time: "09:00", title: "Русские Файлы: 2002" },
+      { time: "10:00", title: "Победитель битвы" },
+      { time: "10:30", title: "Топ–40: лучшие хиты недели" },
+      { time: "13:30", title: "Капсула Времени" },
+      { time: "14:00", title: "Золотой запас" },
+      { time: "15:00", title: "Битва исполнителей: Глюк'Oza VS. Винтаж" },
+      { time: "16:00", title: "Крутой Хит" },
+      { time: "17:00", title: "Гламурные 00е" },
+      { time: "19:00", title: "Rap & R'N'B jams" },
+      { time: "20:00", title: "Non-stop: 00-е" },
+      { time: "22:00", title: "100% ЛЕТНИЙ ХИТ" },
+      { time: "23:00", title: "Крутой Хит" },
+    ],
+  },
+  {
+    day: "Пт", date: "10.07",
+    shows: [
+      { time: "00:00", title: "Золотой запас" },
+      { time: "02:00", title: "Полуночники" },
+      { time: "05:00", title: "Non-stop: 90-е" },
+      { time: "07:00", title: "Утренний Будильник" },
+      { time: "09:00", title: "Русские Файлы: 2003" },
+      { time: "10:00", title: "Победитель битвы" },
+      { time: "10:30", title: "Угадай клип по году" },
+      { time: "11:30", title: "Топ–30: Золото недели" },
+      { time: "13:00", title: "Капсула Времени" },
+      { time: "14:00", title: "Музыкальный гороскоп" },
+      { time: "15:00", title: "Праздник в каждый дом" },
+      { time: "16:00", title: "Эволюция: Britney Spears" },
+      { time: "17:00", title: "Гламурные 00-е" },
+      { time: "19:00", title: "Крутой Хит" },
+      { time: "20:00", title: "Non-stop: 00-е" },
+      { time: "22:00", title: "Rap & R'N'B jams" },
+      { time: "23:00", title: "Dancefloor" },
+    ],
+  },
+  {
+    day: "Сб", date: "11.07",
+    shows: [
+      { time: "00:00", title: "Золотой запас" },
+      { time: "02:00", title: "18+ блок" },
+      { time: "03:00", title: "Полуночники" },
+      { time: "06:00", title: "Утренний Будильник" },
+      { time: "08:00", title: "Русские Файлы: 2004" },
+      { time: "09:00", title: "Топ–30: Золото недели" },
+      { time: "11:00", title: "Назад в 2003-й!" },
+      { time: "12:00", title: "Золотая шкатулка" },
+      { time: "14:10", title: "Сделано в 10-х" },
+      { time: "15:00", title: "100% ЛЕТНИЙ ХИТ" },
+      { time: "16:00", title: "Крутой Хит!" },
+      { time: "17:00", title: "Гламурные 00-е" },
+      { time: "19:00", title: "Hip–Hop Чарт" },
+      { time: "20:00", title: "Non-stop: 00-е" },
+      { time: "22:00", title: "Dancefloor" },
+    ],
+  },
+  {
+    day: "Вс", date: "12.07",
+    shows: [
+      { time: "00:00", title: "Hot weekend" },
+      { time: "02:00", title: "Полуночники" },
+      { time: "05:00", title: "Non-stop: 90-е" },
+      { time: "07:00", title: "Утренний Будильник" },
+      { time: "09:00", title: "Крутой Хит!" },
+      { time: "10:00", title: "Топ–40: самые самые" },
+      { time: "13:30", title: "100% ХИТ – 2026" },
+      { time: "17:00", title: "Золотая шкатулка" },
+      { time: "19:00", title: "Танцевальный Чарт" },
+      { time: "20:00", title: "Non-stop: 00-е" },
+      { time: "22:00", title: "Dancefloor" },
+    ],
+  },
 ];
 
 export default function Index() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
 
+  const now = new Date();
+  const todayIdx = (now.getDay() + 6) % 7; // 0=Пн
+  const [activeDay, setActiveDay] = useState(Math.min(todayIdx, 6));
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSent(true);
   };
 
-  const now = new Date();
-  const currentHour = now.getHours();
-  const currentShow = SCHEDULE.findLast((s) => parseInt(s.time) <= currentHour) ?? SCHEDULE[SCHEDULE.length - 1];
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const activeShows = WEEK[activeDay].shows;
+  const currentShow = activeShows.filter((s) => {
+    const [h, m] = s.time.split(":").map(Number);
+    return h * 60 + m <= currentMinutes;
+  }).at(-1) ?? activeShows[0];
 
   return (
     <>
@@ -110,20 +253,30 @@ export default function Index() {
         <section id="schedule" className="section-padding">
           <div className="section-header">
             <h2 className="section-title">РАСПИСАНИЕ</h2>
-            <span style={{ fontWeight: 800, fontSize: 14, textTransform: "uppercase" }}>Ежедневно</span>
+          </div>
+          <div className="schedule-tabs">
+            {WEEK.map((d, i) => (
+              <button
+                key={d.day}
+                className={`schedule-tab${activeDay === i ? " schedule-tab--active" : ""}`}
+                onClick={() => setActiveDay(i)}
+              >
+                <span>{d.day}</span>
+                <span className="schedule-tab-date">{d.date}</span>
+              </button>
+            ))}
           </div>
           <div className="schedule-grid">
-            {SCHEDULE.map((item) => {
-              const isCurrent = item.time === currentShow.time;
+            {activeShows.map((item) => {
+              const isCurrent = activeDay === Math.min(todayIdx, 6) && item.time === currentShow.time;
               return (
-                <div key={item.time} className={`schedule-row${isCurrent ? " schedule-row--active" : ""}`}>
+                <div key={item.time + item.title} className={`schedule-row${isCurrent ? " schedule-row--active" : ""}`}>
                   <div className="schedule-time">{item.time}</div>
                   <div className="schedule-info">
                     <div className="schedule-title">
                       {item.title}
                       {isCurrent && <span className="schedule-live">● СЕЙЧАС</span>}
                     </div>
-                    <div className="schedule-desc">{item.desc}</div>
                   </div>
                   <Icon name="Music" size={20} style={{ color: isCurrent ? "var(--primary)" : "#ccc", flexShrink: 0 }} />
                 </div>

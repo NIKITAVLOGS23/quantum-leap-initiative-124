@@ -713,6 +713,55 @@ footer {
   }
 }
 
+/* Schedule tabs */
+.schedule-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+  overflow-x: auto;
+  border: var(--border);
+  border-bottom: none;
+}
+
+.schedule-tab {
+  flex: 1;
+  min-width: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 8px;
+  border: none;
+  border-right: var(--border);
+  background: white;
+  cursor: pointer;
+  font-family: "Unbounded", sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+
+.schedule-tab:last-child {
+  border-right: none;
+}
+
+.schedule-tab:hover {
+  background: #fdf0d0;
+}
+
+.schedule-tab--active {
+  background: var(--primary);
+  color: white;
+}
+
+.schedule-tab-date {
+  font-family: "Montserrat", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
 /* Schedule */
 .schedule-grid {
   display: flex;
