@@ -448,7 +448,11 @@ export default function Index() {
       <footer>
         <div>
           <div className="footer-logo">
-            GOLD<span style={{ color: "var(--primary)" }}>★</span>TV
+            <img
+              src="https://cdn.poehali.dev/files/a1a3a0c3-0537-42ac-a9cb-3206d111e4b5.png"
+              alt="GOLDTV"
+              style={{ height: 80, width: "auto", display: "block" }}
+            />
           </div>
           <p style={{ color: "#666", lineHeight: 1.6, marginBottom: 20 }}>
             Музыка, клипы, ностальгия — интернет-канал для тех, кто помнит. Вещаем онлайн 24/7.
