@@ -183,7 +183,7 @@ export default function Index() {
       <header className="header">
         <div className="logo">
           <img
-            src="https://cdn.poehali.dev/files/0e7d44dc-fa19-4e84-82be-b5d09c8b3026.jpg"
+            src="https://cdn.poehali.dev/files/05500263-150b-4eb0-b6af-4ef8b3cc1291.png"
             alt="GOLDTV"
             style={{ height: 80, width: "auto", display: "block" }}
           />
