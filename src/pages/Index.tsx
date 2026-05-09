@@ -308,51 +308,48 @@ export default function Index() {
 
           <div className="menu-grid">
             <div className="menu-card">
-              <span className="menu-tag">В эфире сейчас</span>
+              <span className="menu-tag">Хит эфира</span>
               <img
-                src="https://cdn.poehali.dev/projects/5f50b5e6-b10e-40a7-9e10-ae9fd795cd71/files/85608bfc-0c0d-4000-90b4-c9874b84e51d.jpg"
-                alt="Ретро студия GOLDTV"
+                src="https://cdn.poehali.dev/files/7b2bdf83-630f-45e9-8116-56be91e92e9d.jpg"
+                alt="Золотая шкатулка"
               />
               <div className="menu-card-body">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                  <h3>Золотые 70-е</h3>
-                  <span className="price">🔴 Live</span>
+                  <h3>Золотая шкатулка</h3>
                 </div>
-                <p style={{ fontSize: 14, color: "#666" }}>Лучшие хиты эпохи диско, рок и соул — в непрерывном эфире.</p>
+                <p style={{ fontSize: 14, color: "#666" }}>Коллекция музыкальных сокровищ, бережно хранимых временем. Каждая мелодия здесь — драгоценность: от проникновенных романсов и классики до культовых хитов разных эпох. Откройте шкатулку и позвольте любимым звукам окутать вас теплом, ностальгией и волшебством.</p>
               </div>
             </div>
 
             <div className="menu-card">
               <span className="menu-tag" style={{ background: "var(--secondary)" }}>
-                Хиты 80-х
+                Хит эфира
               </span>
               <img
-                src="https://cdn.poehali.dev/projects/5f50b5e6-b10e-40a7-9e10-ae9fd795cd71/files/dc375963-7de7-4500-862e-909124fc339d.jpg"
-                alt="Клипы 80-х"
+                src="https://cdn.poehali.dev/files/ac817aae-3ac2-45fe-b5d4-f403b7d4e308.jpg"
+                alt="Non-Stop: 90-е"
               />
               <div className="menu-card-body">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                  <h3>Neon & Синти-поп</h3>
-                  <span className="price">⏱ 21:00</span>
+                  <h3>Non-Stop: 90–е</h3>
                 </div>
-                <p style={{ fontSize: 14, color: "#666" }}>Электронные ритмы и яркие клипы золотого десятилетия.</p>
+                <p style={{ fontSize: 14, color: "#666" }}>Бесконечный поток хитов, под которые танцевали на дискотеках, влюблялись и мечтали. От энергичного европопа до проникновенного гранжа — только те песни, что стали саундтреком целого поколения. Включите и почувствуйте себя снова молодым!</p>
               </div>
             </div>
 
             <div className="menu-card">
               <span className="menu-tag" style={{ background: "var(--accent)", color: "var(--dark)" }}>
-                Ностальгия
+                Хит эфира
               </span>
               <img
-                src="https://cdn.poehali.dev/projects/5f50b5e6-b10e-40a7-9e10-ae9fd795cd71/files/fe59b3ec-8752-4625-a5f7-4e7a9a7d1193.jpg"
-                alt="Золотые пластинки"
+                src="https://cdn.poehali.dev/files/cbb175a6-b6b0-4178-beae-9ffcd1a63798.jpg"
+                alt="Non-Stop: 00-е"
               />
               <div className="menu-card-body">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                  <h3>Виниловый архив</h3>
-                  <span className="price">⏱ 23:00</span>
+                  <h3>Non-Stop: 00–е</h3>
                 </div>
-                <p style={{ fontSize: 14, color: "#666" }}>Редкие записи и культовые альбомы в оцифрованном качестве.</p>
+                <p style={{ fontSize: 14, color: "#666" }}>Перезагрузка вашего плейлиста! R&B‑бит, поп‑панк‑энергия, танцевальные гимны и первые интернет‑хиты. От Black Eyed Peas до Evanescence — всё, что звучало из каждого телефона и колонки в нулевых, теперь нон‑стоп!</p>
               </div>
             </div>
           </div>
