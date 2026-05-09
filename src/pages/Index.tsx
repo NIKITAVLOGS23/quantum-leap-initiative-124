@@ -373,31 +373,12 @@ export default function Index() {
           <h2 className="section-title" style={{ marginBottom: 40, textAlign: "center" }}>
             @GOLDTV
           </h2>
-          <div className="social-grid">
-            <div className="social-item">
-              <img
-                src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                alt="Концерт"
-              />
-            </div>
-            <div className="social-item">
-              <img
-                src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                alt="Эфир"
-              />
-            </div>
-            <div className="social-item">
-              <img
-                src="https://images.unsplash.com/photo-1526218626217-dc65a29bb444?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                alt="Пластинки"
-              />
-            </div>
-            <div className="social-item">
-              <img
-                src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                alt="Музыкант"
-              />
-            </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <img
+              src="https://cdn.poehali.dev/files/5559ff44-6333-40af-92cb-136b7253d17c.jpg"
+              alt="GOLDTV"
+              style={{ width: "100%", maxWidth: 900, borderRadius: 12, display: "block" }}
+            />
           </div>
         </section>
 
