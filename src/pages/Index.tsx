@@ -169,6 +169,15 @@ export default function Index() {
 
   return (
     <>
+      <div className="yt-bg-wrapper">
+        <iframe
+          className="yt-bg-iframe"
+          src="https://www.youtube.com/embed/TJFTQ44JN2k?autoplay=1&mute=1&loop=1&playlist=TJFTQ44JN2k&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=0"
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+        />
+        <div className="yt-bg-overlay" />
+      </div>
       <div className="grain-overlay" />
 
       <header className="header">
