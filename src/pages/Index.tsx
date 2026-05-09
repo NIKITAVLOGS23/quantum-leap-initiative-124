@@ -185,7 +185,7 @@ export default function Index() {
           <img
             src="https://cdn.poehali.dev/files/0e7d44dc-fa19-4e84-82be-b5d09c8b3026.jpg"
             alt="GOLDTV"
-            style={{ height: 48, width: "auto", display: "block" }}
+            style={{ height: 80, width: "auto", display: "block" }}
           />
         </div>
         <nav>
