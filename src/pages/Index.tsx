@@ -182,7 +182,11 @@ export default function Index() {
 
       <header className="header">
         <div className="logo">
-          GOLD<span style={{ color: "var(--primary)" }}>★</span>TV
+          <img
+            src="https://cdn.poehali.dev/files/0e7d44dc-fa19-4e84-82be-b5d09c8b3026.jpg"
+            alt="GOLDTV"
+            style={{ height: 48, width: "auto", display: "block" }}
+          />
         </div>
         <nav>
           <a href="#player">Эфир</a>
