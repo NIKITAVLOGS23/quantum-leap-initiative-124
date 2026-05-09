@@ -207,7 +207,7 @@ export default function Index() {
               <br />
               КОТОРАЯ <span>ЖИЛА</span>
             </h1>
-            <p className="text-base md:text-lg lg:text-xl mb-8 md:mb-10 leading-relaxed text-[#555]">
+            <p className="text-base md:text-lg lg:text-xl mb-8 md:mb-10 leading-relaxed text-white">
               Интернет-канал GOLDTV — это лучшие клипы и музыка прошлых эпох. Ностальгия в прямом эфире, 24/7.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
