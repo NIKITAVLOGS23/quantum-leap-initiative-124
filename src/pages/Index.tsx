@@ -469,7 +469,7 @@ export default function Index() {
             Музыка, клипы, ностальгия — интернет-канал для тех, кто помнит. Вещаем онлайн 24/7.
           </p>
           <div style={{ display: "flex", gap: 12 }}>
-            <a href="#" className="social-btn" title="Telegram">
+            <a href="https://t.me/goldtvoldschool" target="_blank" rel="noopener noreferrer" className="social-btn" title="Telegram">
               <Icon name="Send" size={18} />
             </a>
             <a href="#" className="social-btn" title="ВКонтакте">
