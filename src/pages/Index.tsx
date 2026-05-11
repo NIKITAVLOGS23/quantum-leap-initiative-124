@@ -351,11 +351,11 @@ export default function Index() {
             </button>
           ))}
         </div>
-        <div className="bento-schedule-list">
-          {activeShows.map((item) => {
+        <div className="bento-schedule-list stagger-parent">
+          {activeShows.map((item, idx) => {
             const isCurrent = activeDay === Math.min(todayIdx, 6) && item.time === currentShow.time;
             return (
-              <div key={item.time + item.title} className={`bento-schedule-row${isCurrent ? " bento-schedule-row--active" : ""}`}>
+              <div key={item.time + item.title} className={`bento-schedule-row stagger-child${isCurrent ? " bento-schedule-row--active" : ""}`} style={{ "--stagger-i": idx } as React.CSSProperties}>
                 <div className="bento-schedule-time">{item.time}</div>
                 <div className="bento-schedule-title">
                   {item.title}
@@ -374,8 +374,8 @@ export default function Index() {
           <h2 className="bento-section-title">ТОП ЭФИРА</h2>
           <a href="#" className="bento-section-link">Весь архив</a>
         </div>
-        <div className="bento-cards-grid">
-          <div className="bento-show-card">
+        <div className="bento-cards-grid stagger-parent">
+          <div className="bento-show-card stagger-child">
             <span className="bento-show-tag">Хит эфира</span>
             <img src="https://cdn.poehali.dev/files/7b2bdf83-630f-45e9-8116-56be91e92e9d.jpg" alt="Золотая шкатулка" />
             <div className="bento-show-body">
@@ -383,7 +383,7 @@ export default function Index() {
               <p>Коллекция музыкальных сокровищ, бережно хранимых временем. Каждая мелодия — драгоценность: от романсов до культовых хитов разных эпох.</p>
             </div>
           </div>
-          <div className="bento-show-card">
+          <div className="bento-show-card stagger-child">
             <span className="bento-show-tag bento-show-tag--2">Хит эфира</span>
             <img src="https://cdn.poehali.dev/files/ac817aae-3ac2-45fe-b5d4-f403b7d4e308.jpg" alt="Non-Stop 90-е" />
             <div className="bento-show-body">
@@ -391,7 +391,7 @@ export default function Index() {
               <p>Бесконечный поток хитов, под которые танцевали на дискотеках, влюблялись и мечтали. Только те песни, что стали саундтреком поколения.</p>
             </div>
           </div>
-          <div className="bento-show-card">
+          <div className="bento-show-card stagger-child">
             <span className="bento-show-tag bento-show-tag--3">Хит эфира</span>
             <img src="https://cdn.poehali.dev/files/cbb175a6-b6b0-4178-beae-9ffcd1a63798.jpg" alt="Non-Stop 00-е" />
             <div className="bento-show-body">
