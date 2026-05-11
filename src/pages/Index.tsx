@@ -240,7 +240,7 @@ export default function Index() {
               <span className="bento-avatar">🎤</span>
             </div>
             <div className="bento-arrow">→</div>
-            <div className="bento-counter-num">500K+</div>
+            <div className="bento-counter-num">2K+</div>
             <div className="bento-counter-label">Слушателей</div>
           </div>
 
