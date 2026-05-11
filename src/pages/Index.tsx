@@ -194,6 +194,16 @@ export default function Index() {
 
   return (
     <div className="bento-page">
+      {/* ── VIDEO BACKGROUND ── */}
+      <div className="bento-yt-bg">
+        <iframe
+          className="bento-yt-iframe"
+          src="https://www.youtube.com/embed/TJFTQ44JN2k?autoplay=1&mute=1&loop=1&playlist=TJFTQ44JN2k&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+          allow="autoplay; encrypted-media"
+        />
+        <div className="bento-yt-overlay" />
+      </div>
+
       {/* ── NAVBAR ── */}
       <header className="bento-nav">
         <button className="bento-nav-burger">
