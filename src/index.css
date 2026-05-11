@@ -247,6 +247,7 @@ nav a:hover {
   pointer-events: none;
   z-index: 0;
   filter: blur(40px);
+  animation: glow-drift 8s ease-in-out infinite;
 }
 
 .hero::after {
@@ -264,6 +265,7 @@ nav a:hover {
   pointer-events: none;
   z-index: 0;
   filter: blur(50px);
+  animation: glow-breathe 6s ease-in-out infinite;
 }
 
 @media (min-width: 768px) {
@@ -1077,6 +1079,47 @@ footer {
   }
 }
 
+/* ── Glow animations ── */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes glow-drift {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    opacity: 1;
+    transform: translate(20px, -15px) scale(1.08);
+  }
+  66% {
+    opacity: 0.75;
+    transform: translate(-10px, 10px) scale(0.95);
+  }
+}
+
+@keyframes glow-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+    filter: blur(60px);
+  }
+  50% {
+    opacity: 0.9;
+    filter: blur(45px);
+  }
+}
+
 /* ── Glow decorations ── */
 
 /* Карточки — секция с программами/контентом */
@@ -1099,6 +1142,7 @@ footer {
   filter: blur(60px);
   pointer-events: none;
   z-index: 0;
+  animation: glow-drift 10s ease-in-out infinite;
 }
 
 .menu-grid::after {
@@ -1116,6 +1160,7 @@ footer {
   filter: blur(60px);
   pointer-events: none;
   z-index: 0;
+  animation: glow-breathe 7s ease-in-out infinite 1.5s;
 }
 
 .menu-card {
@@ -1148,6 +1193,7 @@ footer {
   );
   filter: blur(70px);
   pointer-events: none;
+  animation: glow-pulse 9s ease-in-out infinite 2s;
 }
 
 /* Футер glow */
@@ -1171,6 +1217,7 @@ footer::before {
   );
   filter: blur(60px);
   pointer-events: none;
+  animation: glow-breathe 11s ease-in-out infinite 3s;
 }
 
 /* Секция расписания glow */
