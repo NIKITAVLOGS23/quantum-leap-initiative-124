@@ -4,6 +4,75 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Smooth scroll ── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Fade-in on scroll ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fade-in--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered bento cells */
+.bento-grid .bento-cell {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bento-hero-wrap.fade-in--visible .bento-cell:nth-child(1) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.05s;
+}
+.bento-hero-wrap.fade-in--visible .bento-cell:nth-child(2) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.15s;
+}
+.bento-hero-wrap.fade-in--visible .bento-cell:nth-child(3) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.22s;
+}
+.bento-hero-wrap.fade-in--visible .bento-cell:nth-child(4) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.29s;
+}
+.bento-hero-wrap.fade-in--visible .bento-cell:nth-child(5) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.36s;
+}
+.bento-hero-wrap.fade-in--visible .bento-cell:nth-child(6) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.43s;
+}
+.bento-hero-wrap.fade-in--visible .bento-cell:nth-child(7) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.5s;
+}
+.bento-hero-wrap.fade-in--visible .bento-cell:nth-child(8) {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.57s;
+}
+
 @layer base {
   :root {
     /* Dark Neon theme variables */

@@ -1,5 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
+
+function useFadeIn() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add("fade-in--visible"); obs.disconnect(); } },
+      { threshold: 0.12 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
 
 const WEEK = [
   {
@@ -154,6 +169,13 @@ export default function Index() {
   const [sent, setSent] = useState(false);
   const [search, setSearch] = useState("");
 
+  const refMarquee = useFadeIn();
+  const refPlayer = useFadeIn();
+  const refSchedule = useFadeIn();
+  const refShows = useFadeIn();
+  const refAbout = useFadeIn();
+  const refContact = useFadeIn();
+
   const now = new Date();
   const todayIdx = (now.getDay() + 6) % 7;
   const [activeDay, setActiveDay] = useState(Math.min(todayIdx, 6));
@@ -196,7 +218,7 @@ export default function Index() {
       </header>
 
       {/* ── HERO BENTO GRID ── */}
-      <section id="hero" className="bento-hero-wrap">
+      <section id="hero" className="bento-hero-wrap fade-in fade-in--visible">
         <div className="bento-grid">
 
           {/* Cell 1 — BIG TITLE */}
@@ -288,14 +310,14 @@ export default function Index() {
       </section>
 
       {/* ── MARQUEE ── */}
-      <div className="bento-marquee">
+      <div ref={refMarquee} className="bento-marquee fade-in">
         <div className="bento-marquee-inner">
           &nbsp;★ ЛУЧШИЕ ХИТЫ ВСЕХ ВРЕМЁН ★ КЛИПЫ 70-х 80-х 90-х ★ ПРЯМОЙ ЭФИР ★ ТОЛЬКО ЗОЛОТАЯ МУЗЫКА ★ GOLDTV ОНЛАЙН ★ ЛУЧШИЕ ХИТЫ ВСЕХ ВРЕМЁН ★ КЛИПЫ 70-х 80-х 90-х ★ ПРЯМОЙ ЭФИР ★ ТОЛЬКО ЗОЛОТАЯ МУЗЫКА ★ GOLDTV ОНЛАЙН&nbsp;
         </div>
       </div>
 
       {/* ── PLAYER ── */}
-      <section id="player" className="bento-section">
+      <section id="player" ref={refPlayer} className="bento-section fade-in">
         <div className="bento-section-header">
           <h2 className="bento-section-title">ПРЯМОЙ ЭФИР</h2>
           <span className="bento-live-badge">● LIVE</span>
@@ -313,7 +335,7 @@ export default function Index() {
       </section>
 
       {/* ── SCHEDULE ── */}
-      <section id="schedule" className="bento-section">
+      <section id="schedule" ref={refSchedule} className="bento-section fade-in">
         <div className="bento-section-header">
           <h2 className="bento-section-title">РАСПИСАНИЕ</h2>
         </div>
@@ -347,7 +369,7 @@ export default function Index() {
       </section>
 
       {/* ── TOP SHOWS ── */}
-      <section className="bento-section">
+      <section ref={refShows} className="bento-section fade-in">
         <div className="bento-section-header">
           <h2 className="bento-section-title">ТОП ЭФИРА</h2>
           <a href="#" className="bento-section-link">Весь архив</a>
@@ -381,7 +403,7 @@ export default function Index() {
       </section>
 
       {/* ── ABOUT ── */}
-      <section id="about" className="bento-about-section">
+      <section id="about" ref={refAbout} className="bento-about-section fade-in">
         <div className="bento-about-glow" />
         <div className="bento-about-content">
           <h2 className="bento-about-title">ЗВУЧИТ КАК ТОГДА.</h2>
@@ -399,7 +421,7 @@ export default function Index() {
       </section>
 
       {/* ── CONTACT ── */}
-      <section id="contact" className="bento-section">
+      <section id="contact" ref={refContact} className="bento-section fade-in">
         <div className="bento-contact-wrap">
           <h2 className="bento-section-title" style={{ marginBottom: 8 }}>СВЯЗАТЬСЯ</h2>
           <p className="bento-contact-sub">Предложение о сотрудничестве, вопрос или просто привет — пишите!</p>
