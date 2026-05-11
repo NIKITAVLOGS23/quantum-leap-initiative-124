@@ -428,6 +428,8 @@ nav a:hover {
 /* Sections */
 .section-padding {
   padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
 }
 
 @media (min-width: 768px) {
@@ -1073,4 +1075,123 @@ footer {
     padding: 5px 15px;
     font-size: 12px;
   }
+}
+
+/* ── Glow decorations ── */
+
+/* Карточки — секция с программами/контентом */
+.menu-grid {
+  position: relative;
+}
+
+.menu-grid::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  left: -100px;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(
+    circle,
+    rgba(120, 80, 255, 0.2) 0%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.menu-grid::after {
+  content: "";
+  position: absolute;
+  bottom: -60px;
+  right: -80px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(
+    circle,
+    rgba(200, 244, 0, 0.1) 0%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.menu-card {
+  position: relative;
+  z-index: 1;
+}
+
+/* Расписание */
+.schedule-grid {
+  position: relative;
+}
+
+/* Vibe-секция glow */
+.retro-vibe {
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-vibe::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: 30%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(
+    circle,
+    rgba(0, 180, 255, 0.12) 0%,
+    transparent 65%
+  );
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+/* Футер glow */
+footer {
+  position: relative;
+  overflow: hidden;
+}
+
+footer::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 300px;
+  background: radial-gradient(
+    ellipse,
+    rgba(200, 244, 0, 0.07) 0%,
+    transparent 65%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* Секция расписания glow */
+.schedule-tabs {
+  position: relative;
+  z-index: 1;
+}
+
+section:has(.schedule-grid)::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -100px;
+  transform: translateY(-50%);
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(
+    circle,
+    rgba(120, 80, 255, 0.15) 0%,
+    transparent 70%
+  );
+  filter: blur(70px);
+  pointer-events: none;
 }
