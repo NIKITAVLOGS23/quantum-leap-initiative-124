@@ -226,6 +226,44 @@ nav a:hover {
   min-height: 500px;
   border-bottom: 1px solid #1e1e1e;
   background: #0d0d0d;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(120, 80, 255, 0.35) 0%,
+    rgba(0, 200, 255, 0.2) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(40px);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -60px;
+  left: 30%;
+  width: 400px;
+  height: 300px;
+  background: radial-gradient(
+    ellipse,
+    rgba(200, 244, 0, 0.12) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(50px);
 }
 
 @media (min-width: 768px) {
@@ -242,6 +280,8 @@ nav a:hover {
   flex-direction: column;
   justify-content: center;
   border-bottom: 1px solid #1e1e1e;
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 768px) {
@@ -287,6 +327,20 @@ nav a:hover {
     center center / cover;
   position: relative;
   min-height: 300px;
+  z-index: 1;
+}
+
+.hero-img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(120, 80, 255, 0.25) 0%,
+    rgba(0, 200, 255, 0.15) 50%,
+    transparent 80%
+  );
+  pointer-events: none;
 }
 
 @media (min-width: 768px) {
