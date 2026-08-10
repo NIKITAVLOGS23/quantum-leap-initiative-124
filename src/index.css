@@ -2445,6 +2445,7 @@ section:has(.schedule-grid)::before {
 
 .admin-password-field input {
   padding-right: 40px;
+  color: #111;
 }
 
 .admin-password-toggle {
