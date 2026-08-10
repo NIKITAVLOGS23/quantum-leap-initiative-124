@@ -73,7 +73,7 @@ def handler(event: dict, context) -> dict:
 
 def check_password(body: dict) -> bool:
     # TODO: временно захардкожен пароль вместо секрета ADMIN_PANEL_PASSWORD — вернуть на os.environ, когда пользователь решит проблему с виджетом ввода секрета
-    return body.get('password') == 'Vlogs@2345'
+    return body.get('password') == 'goldtv2026'
 
 
 def handle_login(body: dict):
