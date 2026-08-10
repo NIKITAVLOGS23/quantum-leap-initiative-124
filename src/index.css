@@ -2410,3 +2410,209 @@ section:has(.schedule-grid)::before {
   padding-top: 24px;
   border-top: 1px solid #1a1a1a;
 }
+
+/* ── ADMIN ── */
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.admin-login-card {
+  background: var(--card-bg);
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 40px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-login-card h1 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 26px;
+  color: #fff;
+  text-align: center;
+}
+
+.admin-page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.admin-header h1 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 30px;
+  color: #fff;
+}
+
+.admin-back-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.admin-dropzone {
+  border: 2px dashed #333;
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  color: #888;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-dropzone svg {
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.admin-dropzone p {
+  color: #fff;
+  font-size: 16px;
+  margin: 0;
+}
+
+.admin-dropzone span {
+  font-size: 13px;
+  color: #666;
+}
+
+.admin-dropzone--active {
+  border-color: var(--primary);
+  background: rgba(200, 244, 0, 0.05);
+}
+
+.admin-uploads {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-upload-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  align-items: center;
+  gap: 12px;
+  background: var(--card-bg);
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.admin-upload-bar {
+  height: 6px;
+  background: #222;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.admin-upload-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.2s;
+}
+
+.admin-playlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 32px 0 16px;
+}
+
+.admin-playlist-header h2 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 22px;
+  color: #fff;
+}
+
+.admin-playlist-header span {
+  color: #666;
+  font-size: 14px;
+}
+
+.admin-empty {
+  color: #666;
+  text-align: center;
+  padding: 32px 0;
+}
+
+.admin-playlist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card-bg);
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: grab;
+}
+
+.admin-drag-handle {
+  color: #555;
+  flex-shrink: 0;
+}
+
+.admin-item-num {
+  color: var(--primary);
+  font-weight: 700;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.admin-item-title {
+  flex: 1;
+  color: #fff;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-item-duration {
+  color: #888;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.admin-item-delete {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.admin-item-delete:hover {
+  color: #ff4d4d;
+}

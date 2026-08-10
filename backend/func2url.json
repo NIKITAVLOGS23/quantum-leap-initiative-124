@@ -1,3 +1,4 @@
 {
-  "hls-proxy": "https://functions.poehali.dev/2260d021-d0a2-400c-9820-aed4f0c0acd1"
+  "video-upload-url": "https://functions.poehali.dev/9329dddc-1240-4cb8-9309-4a86687fc3fd",
+  "playlist-api": "https://functions.poehali.dev/f53e4fe3-cb91-4242-9d46-36eb7f1f83da"
 }

@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS preflight",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Wrong password rejected",
+      "method": "POST",
+      "path": "/",
+      "body": {"password": "wrong", "file_name": "test.mp4", "content_type": "video/mp4"},
+      "expectedStatus": 401
+    }
+  ]
+}
