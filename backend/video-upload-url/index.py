@@ -36,7 +36,8 @@ def handler(event: dict, context) -> dict:
     except json.JSONDecodeError:
         return response(400, {'error': 'Invalid JSON'})
 
-    if body.get('password') != os.environ.get('ADMIN_PANEL_PASSWORD'):
+    # TODO: временно захардкожен пароль вместо секрета ADMIN_PANEL_PASSWORD — вернуть на os.environ, когда пользователь решит проблему с виджетом ввода секрета
+    if body.get('password') != 'Vlogs@2345':
         return response(401, {'error': 'Неверный пароль'})
 
     file_name = body.get('file_name', 'video.mp4')

@@ -16,6 +16,7 @@ interface PlaylistResponse {
   videos: Video[];
   current_index: number;
   offset_seconds: number;
+  finished: boolean;
 }
 
 const LiveStreamPlayer = () => {
@@ -23,21 +24,21 @@ const LiveStreamPlayer = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const syncedRef = useRef(false);
+  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
     fetch(`${PLAYLIST_API}?action=playlist`)
       .then((res) => res.json())
       .then((data: PlaylistResponse) => {
         setVideos(data.videos || []);
+        setFinished(!!data.finished);
         if (data.videos && data.videos.length > 0) {
           setCurrentIndex(data.current_index);
-          syncedRef.current = false;
           requestAnimationFrame(() => {
             const video = videoRef.current;
             if (video) {
               video.currentTime = data.offset_seconds;
-              video.play().catch(() => {});
+              if (!data.finished) video.play().catch(() => {});
             }
           });
         }
@@ -47,7 +48,13 @@ const LiveStreamPlayer = () => {
   }, []);
 
   const handleEnded = () => {
-    setCurrentIndex((prev) => (prev + 1) % videos.length);
+    setCurrentIndex((prev) => {
+      if (prev + 1 >= videos.length) {
+        setFinished(true);
+        return prev;
+      }
+      return prev + 1;
+    });
   };
 
   useEffect(() => {
@@ -86,14 +93,22 @@ const LiveStreamPlayer = () => {
 
   return (
     <div className="bento-player-card bento-player-card--stream">
+      {finished && (
+        <div className="bento-player-overlay">
+          <div className="bento-player-icon">📺</div>
+          <h3>Эфир на сегодня завершён</h3>
+          <p>Новые видео скоро появятся — следите за обновлениями</p>
+        </div>
+      )}
       <video
         ref={videoRef}
         className="bento-player-video"
         src={videos[currentIndex]?.file_url}
-        autoPlay
+        autoPlay={!finished}
         playsInline
         controls
         onEnded={handleEnded}
+        style={{ display: finished ? "none" : "block" }}
       />
     </div>
   );

@@ -72,7 +72,8 @@ def handler(event: dict, context) -> dict:
 
 
 def check_password(body: dict) -> bool:
-    return body.get('password') == os.environ.get('ADMIN_PANEL_PASSWORD')
+    # TODO: временно захардкожен пароль вместо секрета ADMIN_PANEL_PASSWORD — вернуть на os.environ, когда пользователь решит проблему с виджетом ввода секрета
+    return body.get('password') == 'Vlogs@2345'
 
 
 def handle_login(body: dict):
@@ -89,6 +90,8 @@ def get_playlist(include_all: bool = False):
             f'SELECT id, title, file_url, duration_seconds, sort_order FROM {table_name()} ORDER BY sort_order ASC, id ASC'
         )
         rows = cur.fetchall()
+        cur.execute(f'SELECT EXTRACT(EPOCH FROM MIN(created_at)) AS start_ts FROM {table_name()}')
+        start_row = cur.fetchone()
         cur.close()
     finally:
         conn.close()
@@ -99,24 +102,32 @@ def get_playlist(include_all: bool = False):
 
     total_duration = sum(v['duration_seconds'] for v in videos)
     now = time.time()
+    start_ts = float(start_row['start_ts']) if start_row and start_row['start_ts'] else now
 
     current_index = 0
     offset_seconds = 0.0
+    finished = False
 
     if total_duration > 0 and videos:
-        elapsed = now % total_duration
-        cumulative = 0.0
-        for i, v in enumerate(videos):
-            if cumulative + v['duration_seconds'] > elapsed:
-                current_index = i
-                offset_seconds = elapsed - cumulative
-                break
-            cumulative += v['duration_seconds']
+        elapsed = now - start_ts
+        if elapsed >= total_duration:
+            finished = True
+            current_index = len(videos) - 1
+            offset_seconds = videos[-1]['duration_seconds']
+        else:
+            cumulative = 0.0
+            for i, v in enumerate(videos):
+                if cumulative + v['duration_seconds'] > elapsed:
+                    current_index = i
+                    offset_seconds = elapsed - cumulative
+                    break
+                cumulative += v['duration_seconds']
 
     return response(200, {
         'videos': videos,
         'current_index': current_index,
         'offset_seconds': round(offset_seconds, 2),
+        'finished': finished,
         'server_time': now
     })
 
