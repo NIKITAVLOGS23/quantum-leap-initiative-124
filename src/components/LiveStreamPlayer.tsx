@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import Icon from "@/components/ui/icon";
 
-const STREAM_URL = "http://81.177.159.27:8080/hls/stream.m3u8";
+const STREAM_URL = "https://functions.poehali.dev/2260d021-d0a2-400c-9820-aed4f0c0acd1?file=stream.m3u8";
 
 const LiveStreamPlayer = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
