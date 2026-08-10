@@ -38,6 +38,7 @@ const Admin = () => {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploads, setUploads] = useState<{ name: string; progress: number }[]>([]);
@@ -207,13 +208,23 @@ const Admin = () => {
       <div className="admin-login-page">
         <div className="admin-login-card">
           <h1>Вход в панель эфира</h1>
-          <Input
-            type="password"
-            placeholder="Пароль"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && tryLogin(password)}
-          />
+          <div className="admin-password-field">
+            <Input
+              type={showPassword ? "text" : "password"}
+              placeholder="Пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && tryLogin(password)}
+            />
+            <button
+              type="button"
+              className="admin-password-toggle"
+              onClick={() => setShowPassword((v) => !v)}
+              tabIndex={-1}
+            >
+              <Icon name={showPassword ? "EyeOff" : "Eye"} size={18} />
+            </button>
+          </div>
           <Button onClick={() => tryLogin(password)} disabled={authLoading || !password}>
             {authLoading ? "Проверка…" : "Войти"}
           </Button>

@@ -2438,6 +2438,33 @@ section:has(.schedule-grid)::before {
   text-align: center;
 }
 
+.admin-password-field {
+  position: relative;
+  display: flex;
+}
+
+.admin-password-field input {
+  padding-right: 40px;
+}
+
+.admin-password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.admin-password-toggle:hover {
+  color: #333;
+}
+
 .admin-page {
   min-height: 100vh;
   background: var(--bg);
