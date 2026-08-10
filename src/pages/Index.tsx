@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
+import LiveStreamPlayer from "@/components/LiveStreamPlayer";
 
 function useFadeIn() {
   const ref = useRef<HTMLDivElement>(null);
@@ -314,16 +315,7 @@ export default function Index() {
           <h2 className="bento-section-title">ПРЯМОЙ ЭФИР</h2>
           <span className="bento-live-badge">● LIVE</span>
         </div>
-        <div className="bento-player-card">
-          <div className="bento-player-icon">📺</div>
-          <h3>Эфир скоро запустится</h3>
-          <p>Мы готовим прямой эфир GOLDTV. Следите за обновлениями — скоро музыка зазвучит здесь!</p>
-          <div className="bento-tags-row">
-            {["70-е", "80-е", "90-е", "2000-е", "Ностальгия"].map((tag) => (
-              <span key={tag} className="bento-tag bento-tag--lime">{tag}</span>
-            ))}
-          </div>
-        </div>
+        <LiveStreamPlayer />
       </section>
 
       {/* ── SCHEDULE ── */}
