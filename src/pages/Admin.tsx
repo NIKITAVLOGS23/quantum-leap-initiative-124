@@ -54,16 +54,17 @@ const Admin = () => {
   }, []);
 
   const tryLogin = async (pwd: string) => {
+    const cleanPwd = pwd.trim();
     setAuthLoading(true);
     try {
       const res = await fetch(PLAYLIST_API, {
         method: "POST",
-        body: JSON.stringify({ action: "login", password: pwd }),
+        body: JSON.stringify({ action: "login", password: cleanPwd }),
       });
       const data = await res.json();
       if (data.success) {
         setAuthed(true);
-        sessionStorage.setItem("admin_password", pwd);
+        sessionStorage.setItem("admin_password", cleanPwd);
         loadPlaylist();
       } else {
         toast.error("Неверный пароль");
@@ -215,6 +216,10 @@ const Admin = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && tryLogin(password)}
+              autoCapitalize="none"
+              autoCorrect="off"
+              autoComplete="off"
+              spellCheck={false}
             />
             <button
               type="button"
