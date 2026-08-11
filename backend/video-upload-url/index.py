@@ -64,7 +64,6 @@ def handler(event: dict, context) -> dict:
         return handle_complete(body)
     if action == 'abort':
         return handle_abort(body)
-
     return response(400, {'error': 'Unknown action'})
 
 
