@@ -4,7 +4,10 @@ import os
 import time
 import uuid
 import boto3
+from botocore.client import Config
 from concurrent.futures import ThreadPoolExecutor
+
+MAX_WORKERS = 10
 
 CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -27,7 +30,8 @@ def get_s3():
         's3',
         endpoint_url='https://bucket.poehali.dev',
         aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
+        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+        config=Config(max_pool_connections=MAX_WORKERS)
     )
 
 
@@ -108,11 +112,18 @@ def handle_complete(body: dict):
 
     def fetch_part(i):
         part_key = f"tmp_uploads/{upload_id}/{i:06d}"
-        obj = s3.get_object(Bucket='files', Key=part_key)
-        return i, obj['Body'].read()
+        last_error = None
+        for attempt in range(3):
+            try:
+                obj = s3.get_object(Bucket='files', Key=part_key)
+                return i, obj['Body'].read()
+            except Exception as e:
+                last_error = e
+                time.sleep(0.3)
+        raise last_error
 
     parts_data = [None] * total_parts
-    with ThreadPoolExecutor(max_workers=16) as pool:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         for i, data in pool.map(fetch_part, range(total_parts)):
             parts_data[i] = data
 
@@ -126,7 +137,7 @@ def handle_complete(body: dict):
         except Exception:
             pass
 
-    with ThreadPoolExecutor(max_workers=16) as pool:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         list(pool.map(delete_part, range(total_parts)))
 
     cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{file_key}"
