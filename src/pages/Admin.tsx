@@ -59,6 +59,7 @@ const Admin = () => {
     try {
       const res = await fetch(PLAYLIST_API, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "login", password: cleanPwd }),
       });
       const data = await res.json();
@@ -98,6 +99,7 @@ const Admin = () => {
 
       const urlRes = await fetch(UPLOAD_URL_API, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           password,
           file_name: file.name,
@@ -126,6 +128,7 @@ const Admin = () => {
 
       const addRes = await fetch(PLAYLIST_API, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "add",
           password,
@@ -167,6 +170,7 @@ const Admin = () => {
     try {
       await fetch(PLAYLIST_API, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "delete", password, id }),
       });
       setVideos((prev) => prev.filter((v) => v.id !== id));
@@ -197,6 +201,7 @@ const Admin = () => {
     try {
       await fetch(PLAYLIST_API, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "reorder", password, order: videos.map((v) => v.id) }),
       });
     } catch {
