@@ -2493,6 +2493,83 @@ section:has(.schedule-grid)::before {
   font-size: 14px;
 }
 
+.admin-add-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.admin-add-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #888;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    background 0.2s;
+}
+
+.admin-add-tab:hover {
+  color: #ccc;
+}
+
+.admin-add-tab--active {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(200, 244, 0, 0.05);
+}
+
+.admin-link-form {
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--card-bg);
+}
+
+.admin-link-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-link-field label {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.admin-link-field input {
+  color: #111;
+}
+
+.admin-link-hint {
+  color: #666;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.admin-link-duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 200px;
+}
+
+.admin-link-duration span {
+  color: #666;
+}
+
 .admin-dropzone {
   border: 2px dashed #333;
   border-radius: 16px;

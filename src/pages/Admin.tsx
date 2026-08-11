@@ -13,6 +13,7 @@ interface Video {
   file_url: string;
   duration_seconds: number;
   sort_order: number;
+  is_external?: boolean;
 }
 
 function formatDuration(sec: number) {
@@ -57,6 +58,12 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [uploads, setUploads] = useState<{ name: string; progress: number }[]>([]);
   const [dragOver, setDragOver] = useState(false);
+  const [addMode, setAddMode] = useState<"file" | "link">("file");
+  const [linkTitle, setLinkTitle] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkMinutes, setLinkMinutes] = useState("");
+  const [linkSeconds, setLinkSeconds] = useState("");
+  const [linkSubmitting, setLinkSubmitting] = useState(false);
   const dragIndex = useRef<number | null>(null);
 
   useEffect(() => {
@@ -217,6 +224,57 @@ const Admin = () => {
     handleFiles(e.dataTransfer.files);
   };
 
+  const handleAddByLink = async () => {
+    const title = linkTitle.trim();
+    const url = linkUrl.trim();
+    const minutes = parseInt(linkMinutes || "0", 10) || 0;
+    const seconds = parseInt(linkSeconds || "0", 10) || 0;
+    const duration = minutes * 60 + seconds;
+
+    if (!title) {
+      toast.error("Укажи название видео");
+      return;
+    }
+    if (!/^https?:\/\/.+/i.test(url)) {
+      toast.error("Ссылка должна начинаться с http:// или https://");
+      return;
+    }
+    if (duration <= 0) {
+      toast.error("Укажи длительность видео больше 0");
+      return;
+    }
+
+    setLinkSubmitting(true);
+    try {
+      const addRes = await fetch(PLAYLIST_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add",
+          password,
+          title,
+          file_key: `external-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          file_url: url,
+          duration_seconds: duration,
+          is_external: true,
+        }),
+      });
+      const addData = await addRes.json();
+      if (!addRes.ok) throw new Error(addData.error || "Ошибка добавления");
+
+      setVideos((prev) => [...prev, addData.video]);
+      toast.success(`${title} добавлено в эфир`);
+      setLinkTitle("");
+      setLinkUrl("");
+      setLinkMinutes("");
+      setLinkSeconds("");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Ошибка добавления по ссылке");
+    } finally {
+      setLinkSubmitting(false);
+    }
+  };
+
   const handleDelete = async (id: number) => {
     if (!confirm("Удалить это видео из эфира?")) return;
     try {
@@ -304,25 +362,95 @@ const Admin = () => {
         <a href="/" className="admin-back-link">← На сайт</a>
       </div>
 
-      <div
-        className={`admin-dropzone${dragOver ? " admin-dropzone--active" : ""}`}
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-        onClick={() => document.getElementById("admin-file-input")?.click()}
-      >
-        <Icon name="UploadCloud" size={40} />
-        <p>Перетащи сюда видео или папку с видео</p>
-        <span>или нажми, чтобы выбрать файлы</span>
-        <input
-          id="admin-file-input"
-          type="file"
-          accept="video/*"
-          multiple
-          style={{ display: "none" }}
-          onChange={(e) => e.target.files && handleFiles(e.target.files)}
-        />
+      <div className="admin-add-tabs">
+        <button
+          type="button"
+          className={`admin-add-tab${addMode === "file" ? " admin-add-tab--active" : ""}`}
+          onClick={() => setAddMode("file")}
+        >
+          <Icon name="UploadCloud" size={16} />
+          Загрузить файл
+        </button>
+        <button
+          type="button"
+          className={`admin-add-tab${addMode === "link" ? " admin-add-tab--active" : ""}`}
+          onClick={() => setAddMode("link")}
+        >
+          <Icon name="Link" size={16} />
+          Добавить по ссылке
+        </button>
       </div>
+
+      {addMode === "file" ? (
+        <div
+          className={`admin-dropzone${dragOver ? " admin-dropzone--active" : ""}`}
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
+          onClick={() => document.getElementById("admin-file-input")?.click()}
+        >
+          <Icon name="UploadCloud" size={40} />
+          <p>Перетащи сюда видео или папку с видео</p>
+          <span>или нажми, чтобы выбрать файлы</span>
+          <input
+            id="admin-file-input"
+            type="file"
+            accept="video/*"
+            multiple
+            style={{ display: "none" }}
+            onChange={(e) => e.target.files && handleFiles(e.target.files)}
+          />
+        </div>
+      ) : (
+        <div className="admin-link-form">
+          <div className="admin-link-field">
+            <label>Название видео</label>
+            <Input
+              placeholder="Например: Выпуск №12"
+              value={linkTitle}
+              onChange={(e) => setLinkTitle(e.target.value)}
+            />
+          </div>
+
+          <div className="admin-link-field">
+            <label>Прямая ссылка на .mp4</label>
+            <Input
+              placeholder="https://..."
+              value={linkUrl}
+              onChange={(e) => setLinkUrl(e.target.value)}
+            />
+            <span className="admin-link-hint">
+              Нужна именно прямая ссылка на файл, а не страница просмотра. На Яндекс.Диске нажми «Поделиться» → «Скачать по прямой ссылке»; в Google Диске открой доступ «Всем по ссылке» и замени часть адреса /view на /uc?export=download.
+            </span>
+          </div>
+
+          <div className="admin-link-field">
+            <label>Длительность</label>
+            <div className="admin-link-duration">
+              <Input
+                type="number"
+                min={0}
+                placeholder="мин"
+                value={linkMinutes}
+                onChange={(e) => setLinkMinutes(e.target.value)}
+              />
+              <span>:</span>
+              <Input
+                type="number"
+                min={0}
+                max={59}
+                placeholder="сек"
+                value={linkSeconds}
+                onChange={(e) => setLinkSeconds(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <Button onClick={handleAddByLink} disabled={linkSubmitting}>
+            {linkSubmitting ? "Добавление…" : "Добавить в эфир"}
+          </Button>
+        </div>
+      )}
 
       {uploads.length > 0 && (
         <div className="admin-uploads">
