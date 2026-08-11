@@ -34,6 +34,20 @@ function getVideoDuration(file: File): Promise<number> {
   });
 }
 
+const UPLOAD_CHUNK_SIZE = 1.5 * 1024 * 1024;
+
+function readChunkAsBase64(file: File, start: number, end: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      resolve(result.split(",")[1] || "");
+    };
+    reader.onerror = () => reject(new Error("Ошибка чтения файла"));
+    reader.readAsDataURL(file.slice(start, end));
+  });
+}
+
 const Admin = () => {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
@@ -91,40 +105,71 @@ const Admin = () => {
   };
 
   const uploadFile = useCallback(async (file: File) => {
-    const uploadId = file.name + Date.now();
     setUploads((prev) => [...prev, { name: file.name, progress: 0 }]);
+
+    let uploadId: string | undefined;
+    let totalParts = 0;
 
     try {
       const duration = await getVideoDuration(file);
 
-      const urlRes = await fetch(UPLOAD_URL_API, {
+      const startRes = await fetch(UPLOAD_URL_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           password,
+          action: "start",
           file_name: file.name,
           content_type: file.type || "video/mp4",
         }),
       });
-      const urlData = await urlRes.json();
-      if (!urlRes.ok) throw new Error(urlData.error || "Ошибка получения ссылки");
+      const startData = await startRes.json();
+      if (!startRes.ok) throw new Error(startData.error || "Ошибка начала загрузки");
 
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("PUT", urlData.upload_url);
-        xhr.setRequestHeader("Content-Type", file.type || "video/mp4");
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const progress = Math.round((e.loaded / e.total) * 100);
-            setUploads((prev) =>
-              prev.map((u) => (u.name === file.name ? { ...u, progress } : u))
-            );
-          }
-        };
-        xhr.onload = () => (xhr.status < 300 ? resolve() : reject(new Error("Ошибка загрузки")));
-        xhr.onerror = () => reject(new Error("Ошибка загрузки"));
-        xhr.send(file);
+      uploadId = startData.upload_id;
+      const fileKey = startData.file_key;
+      const contentType = startData.content_type;
+
+      totalParts = Math.ceil(file.size / UPLOAD_CHUNK_SIZE);
+
+      for (let i = 0; i < totalParts; i++) {
+        const start = i * UPLOAD_CHUNK_SIZE;
+        const end = Math.min(start + UPLOAD_CHUNK_SIZE, file.size);
+        const base64 = await readChunkAsBase64(file, start, end);
+
+        const partRes = await fetch(UPLOAD_URL_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            password,
+            action: "upload_part",
+            upload_id: uploadId,
+            part_number: i,
+            data: base64,
+          }),
+        });
+        if (!partRes.ok) throw new Error("Ошибка загрузки части файла");
+
+        const progress = Math.round(((i + 1) / totalParts) * 100);
+        setUploads((prev) =>
+          prev.map((u) => (u.name === file.name ? { ...u, progress } : u))
+        );
+      }
+
+      const completeRes = await fetch(UPLOAD_URL_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password,
+          action: "complete",
+          upload_id: uploadId,
+          file_key: fileKey,
+          content_type: contentType,
+          total_parts: totalParts,
+        }),
       });
+      const completeData = await completeRes.json();
+      if (!completeRes.ok) throw new Error(completeData.error || "Ошибка завершения загрузки");
 
       const addRes = await fetch(PLAYLIST_API, {
         method: "POST",
@@ -133,8 +178,8 @@ const Admin = () => {
           action: "add",
           password,
           title: file.name.replace(/\.[^.]+$/, ""),
-          file_key: urlData.file_key,
-          file_url: urlData.file_url,
+          file_key: completeData.file_key,
+          file_url: completeData.file_url,
           duration_seconds: duration,
         }),
       });
@@ -144,6 +189,13 @@ const Admin = () => {
       setVideos((prev) => [...prev, addData.video]);
       toast.success(`${file.name} добавлено в эфир`);
     } catch (e) {
+      if (uploadId) {
+        fetch(UPLOAD_URL_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password, action: "abort", upload_id: uploadId, total_parts: totalParts }),
+        }).catch(() => {});
+      }
       toast.error(`Ошибка загрузки ${file.name}`);
     } finally {
       setUploads((prev) => prev.filter((u) => u.name !== file.name));
