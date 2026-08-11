@@ -4,6 +4,7 @@ import os
 import time
 import uuid
 import boto3
+from concurrent.futures import ThreadPoolExecutor
 
 CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -104,20 +105,29 @@ def handle_complete(body: dict):
         return response(400, {'error': 'Missing required fields'})
 
     s3 = get_s3()
-    combined = bytearray()
-    for i in range(total_parts):
+
+    def fetch_part(i):
         part_key = f"tmp_uploads/{upload_id}/{i:06d}"
         obj = s3.get_object(Bucket='files', Key=part_key)
-        combined.extend(obj['Body'].read())
+        return i, obj['Body'].read()
 
-    s3.put_object(Bucket='files', Key=file_key, Body=bytes(combined), ContentType=content_type)
+    parts_data = [None] * total_parts
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        for i, data in pool.map(fetch_part, range(total_parts)):
+            parts_data[i] = data
 
-    for i in range(total_parts):
+    combined = b''.join(parts_data)
+    s3.put_object(Bucket='files', Key=file_key, Body=combined, ContentType=content_type)
+
+    def delete_part(i):
         part_key = f"tmp_uploads/{upload_id}/{i:06d}"
         try:
             s3.delete_object(Bucket='files', Key=part_key)
         except Exception:
             pass
+
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        list(pool.map(delete_part, range(total_parts)))
 
     cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{file_key}"
 
