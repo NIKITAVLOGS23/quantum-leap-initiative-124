@@ -10,6 +10,7 @@ interface Video {
   title: string;
   file_url: string;
   duration_seconds: number;
+  video_type?: "file" | "link" | "vk";
 }
 
 interface PlaylistResponse {
@@ -21,10 +22,12 @@ interface PlaylistResponse {
 
 const LiveStreamPlayer = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const firstIndexRef = useRef<number | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [finished, setFinished] = useState(false);
+  const [initialOffset, setInitialOffset] = useState(0);
 
   useEffect(() => {
     fetch(`${PLAYLIST_API}?action=playlist`)
@@ -34,6 +37,8 @@ const LiveStreamPlayer = () => {
         setFinished(!!data.finished);
         if (data.videos && data.videos.length > 0) {
           setCurrentIndex(data.current_index);
+          firstIndexRef.current = data.current_index;
+          setInitialOffset(data.offset_seconds || 0);
           requestAnimationFrame(() => {
             const video = videoRef.current;
             if (video) {
@@ -57,13 +62,25 @@ const LiveStreamPlayer = () => {
     });
   };
 
+  const current = videos[currentIndex];
+  const isVk = current?.video_type === "vk";
+
   useEffect(() => {
     const video = videoRef.current;
-    if (video && videos.length > 0) {
+    if (video && videos.length > 0 && !isVk) {
       video.load();
       video.play().catch(() => {});
     }
-  }, [currentIndex, videos.length]);
+  }, [currentIndex, videos.length, isVk]);
+
+  useEffect(() => {
+    if (!isVk || finished || !current) return;
+    const offset = currentIndex === firstIndexRef.current ? initialOffset : 0;
+    const remaining = Math.max(current.duration_seconds - offset, 1);
+    const timeout = setTimeout(handleEnded, remaining * 1000);
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVk, currentIndex, finished]);
 
   if (loading) {
     return (
@@ -100,16 +117,29 @@ const LiveStreamPlayer = () => {
           <p>Новые видео скоро появятся — следите за обновлениями</p>
         </div>
       )}
-      <video
-        ref={videoRef}
-        className="bento-player-video"
-        src={videos[currentIndex]?.file_url}
-        autoPlay={!finished}
-        playsInline
-        controls
-        onEnded={handleEnded}
-        style={{ display: finished ? "none" : "block" }}
-      />
+      {isVk ? (
+        <iframe
+          key={current?.id}
+          className="bento-player-video"
+          src={`${current?.file_url}&autoplay=1`}
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+          allowFullScreen
+          frameBorder="0"
+          title={current?.title || "GOLDTV — прямой эфир"}
+          style={{ display: finished ? "none" : "block" }}
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          className="bento-player-video"
+          src={current?.file_url}
+          autoPlay={!finished}
+          playsInline
+          controls
+          onEnded={handleEnded}
+          style={{ display: finished ? "none" : "block" }}
+        />
+      )}
     </div>
   );
 };

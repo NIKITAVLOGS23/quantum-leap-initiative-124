@@ -14,6 +14,18 @@ interface Video {
   duration_seconds: number;
   sort_order: number;
   is_external?: boolean;
+  video_type?: "file" | "link" | "vk";
+}
+
+function parseVkVideoUrl(url: string): string | null {
+  const trimmed = url.trim();
+  let match = trimmed.match(/vk\.com\/video(-?\d+)_(\d+)/i);
+  if (match) return `${match[1]}_${match[2]}`;
+  match = trimmed.match(/[?&]oid=(-?\d+)&id=(\d+)/i);
+  if (match) return `${match[1]}_${match[2]}`;
+  match = trimmed.match(/^(-?\d+)_(\d+)$/);
+  if (match) return `${match[1]}_${match[2]}`;
+  return null;
 }
 
 function formatDuration(sec: number) {
@@ -58,12 +70,17 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [uploads, setUploads] = useState<{ name: string; progress: number }[]>([]);
   const [dragOver, setDragOver] = useState(false);
-  const [addMode, setAddMode] = useState<"file" | "link">("file");
+  const [addMode, setAddMode] = useState<"file" | "link" | "vk">("file");
   const [linkTitle, setLinkTitle] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [linkMinutes, setLinkMinutes] = useState("");
   const [linkSeconds, setLinkSeconds] = useState("");
   const [linkSubmitting, setLinkSubmitting] = useState(false);
+  const [vkTitle, setVkTitle] = useState("");
+  const [vkUrl, setVkUrl] = useState("");
+  const [vkMinutes, setVkMinutes] = useState("");
+  const [vkSeconds, setVkSeconds] = useState("");
+  const [vkSubmitting, setVkSubmitting] = useState(false);
   const dragIndex = useRef<number | null>(null);
 
   useEffect(() => {
@@ -256,7 +273,7 @@ const Admin = () => {
           file_key: `external-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           file_url: url,
           duration_seconds: duration,
-          is_external: true,
+          video_type: "link",
         }),
       });
       const addData = await addRes.json();
@@ -272,6 +289,60 @@ const Admin = () => {
       toast.error(e instanceof Error ? e.message : "Ошибка добавления по ссылке");
     } finally {
       setLinkSubmitting(false);
+    }
+  };
+
+  const handleAddVk = async () => {
+    const title = vkTitle.trim();
+    const url = vkUrl.trim();
+    const minutes = parseInt(vkMinutes || "0", 10) || 0;
+    const seconds = parseInt(vkSeconds || "0", 10) || 0;
+    const duration = minutes * 60 + seconds;
+
+    if (!title) {
+      toast.error("Укажи название видео");
+      return;
+    }
+    const vkId = parseVkVideoUrl(url);
+    if (!vkId) {
+      toast.error("Не удалось распознать ссылку на видео VK");
+      return;
+    }
+    if (duration <= 0) {
+      toast.error("Укажи длительность видео больше 0");
+      return;
+    }
+
+    setVkSubmitting(true);
+    try {
+      const [oid, vid] = vkId.split("_");
+      const embedUrl = `https://vk.com/video_ext.php?oid=${oid}&id=${vid}&hd=2`;
+      const addRes = await fetch(PLAYLIST_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add",
+          password,
+          title,
+          file_key: `vk-${vkId}`,
+          file_url: embedUrl,
+          duration_seconds: duration,
+          video_type: "vk",
+        }),
+      });
+      const addData = await addRes.json();
+      if (!addRes.ok) throw new Error(addData.error || "Ошибка добавления");
+
+      setVideos((prev) => [...prev, addData.video]);
+      toast.success(`${title} добавлено в эфир`);
+      setVkTitle("");
+      setVkUrl("");
+      setVkMinutes("");
+      setVkSeconds("");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Ошибка добавления видео из VK");
+    } finally {
+      setVkSubmitting(false);
     }
   };
 
@@ -379,6 +450,14 @@ const Admin = () => {
           <Icon name="Link" size={16} />
           Добавить по ссылке
         </button>
+        <button
+          type="button"
+          className={`admin-add-tab${addMode === "vk" ? " admin-add-tab--active" : ""}`}
+          onClick={() => setAddMode("vk")}
+        >
+          <Icon name="Play" size={16} />
+          Добавить из VK
+        </button>
       </div>
 
       {addMode === "file" ? (
@@ -401,7 +480,7 @@ const Admin = () => {
             onChange={(e) => e.target.files && handleFiles(e.target.files)}
           />
         </div>
-      ) : (
+      ) : addMode === "link" ? (
         <div className="admin-link-form">
           <div className="admin-link-field">
             <label>Название видео</label>
@@ -450,6 +529,55 @@ const Admin = () => {
             {linkSubmitting ? "Добавление…" : "Добавить в эфир"}
           </Button>
         </div>
+      ) : (
+        <div className="admin-link-form">
+          <div className="admin-link-field">
+            <label>Название видео</label>
+            <Input
+              placeholder="Например: Выпуск №12"
+              value={vkTitle}
+              onChange={(e) => setVkTitle(e.target.value)}
+            />
+          </div>
+
+          <div className="admin-link-field">
+            <label>Ссылка на видео VK</label>
+            <Input
+              placeholder="https://vk.com/video-123456_789012"
+              value={vkUrl}
+              onChange={(e) => setVkUrl(e.target.value)}
+            />
+            <span className="admin-link-hint">
+              Загрузи ролик в VK Видео (доступ «Всем» или по ссылке) и вставь сюда ссылку на него. Показываться будет через плеер VK, друг за другом с остальными видео в эфире.
+            </span>
+          </div>
+
+          <div className="admin-link-field">
+            <label>Длительность</label>
+            <div className="admin-link-duration">
+              <Input
+                type="number"
+                min={0}
+                placeholder="мин"
+                value={vkMinutes}
+                onChange={(e) => setVkMinutes(e.target.value)}
+              />
+              <span>:</span>
+              <Input
+                type="number"
+                min={0}
+                max={59}
+                placeholder="сек"
+                value={vkSeconds}
+                onChange={(e) => setVkSeconds(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <Button onClick={handleAddVk} disabled={vkSubmitting}>
+            {vkSubmitting ? "Добавление…" : "Добавить в эфир"}
+          </Button>
+        </div>
       )}
 
       {uploads.length > 0 && (
@@ -488,6 +616,8 @@ const Admin = () => {
             >
               <Icon name="GripVertical" size={18} className="admin-drag-handle" />
               <span className="admin-item-num">{i + 1}</span>
+              {v.video_type === "vk" && <Icon name="Play" size={14} className="admin-item-badge" />}
+              {v.video_type === "link" && <Icon name="Link" size={14} className="admin-item-badge" />}
               <span className="admin-item-title">{v.title}</span>
               <span className="admin-item-duration">{formatDuration(v.duration_seconds)}</span>
               <button className="admin-item-delete" onClick={() => handleDelete(v.id)}>

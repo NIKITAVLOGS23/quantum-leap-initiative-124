@@ -87,7 +87,7 @@ def get_playlist(include_all: bool = False):
     try:
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute(
-            f'SELECT id, title, file_url, duration_seconds, sort_order, is_external FROM {table_name()} ORDER BY sort_order ASC, id ASC'
+            f'SELECT id, title, file_url, duration_seconds, sort_order, is_external, video_type FROM {table_name()} ORDER BY sort_order ASC, id ASC'
         )
         rows = cur.fetchall()
         cur.execute(f'SELECT EXTRACT(EPOCH FROM MIN(created_at)) AS start_ts FROM {table_name()}')
@@ -137,7 +137,8 @@ def handle_add(body: dict):
     file_key = body.get('file_key')
     file_url = body.get('file_url')
     duration_seconds = body.get('duration_seconds', 0)
-    is_external = bool(body.get('is_external', False))
+    video_type = body.get('video_type') or ('link' if body.get('is_external') else 'file')
+    is_external = video_type != 'file'
 
     if not title or not file_key or not file_url:
         return response(400, {'error': 'Missing required fields'})
@@ -148,9 +149,9 @@ def handle_add(body: dict):
         cur.execute(f'SELECT COALESCE(MAX(sort_order), -1) + 1 AS next_order FROM {table_name()}')
         next_order = cur.fetchone()['next_order']
         cur.execute(
-            f'''INSERT INTO {table_name()} (title, file_key, file_url, duration_seconds, sort_order, is_external)
-                VALUES (%s, %s, %s, %s, %s, %s) RETURNING id, title, file_url, duration_seconds, sort_order, is_external''',
-            (title, file_key, file_url, duration_seconds, next_order, is_external)
+            f'''INSERT INTO {table_name()} (title, file_key, file_url, duration_seconds, sort_order, is_external, video_type)
+                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id, title, file_url, duration_seconds, sort_order, is_external, video_type''',
+            (title, file_key, file_url, duration_seconds, next_order, is_external, video_type)
         )
         row = cur.fetchone()
         conn.commit()
