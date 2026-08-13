@@ -17,133 +17,18 @@ function useFadeIn() {
   return ref;
 }
 
-const WEEK = [
-  {
-    day: "Вс", date: "5.07",
-    shows: [
-      { time: "18:00", title: "Топ–50: Золотые Хиты" },
-      { time: "22:15", title: "Золотой запас" },
-      { time: "23:00", title: "Dancefloor" },
-    ],
-  },
-  {
-    day: "Пн", date: "6.07",
-    shows: [
-      { time: "00:00", title: "Полуночники" },
-      { time: "05:00", title: "100% ЛЕТНИЙ ХИТ" },
-      { time: "07:00", title: "Утренний Будильник" },
-      { time: "09:00", title: "Музыкальная карта" },
-      { time: "10:00", title: "Золотая шкатулка" },
-      { time: "15:00", title: "Rap & R'N'B jams" },
-      { time: "16:00", title: "Love Hits" },
-      { time: "17:00", title: "Гламурные 00-е" },
-      { time: "19:00", title: "Non-stop: 90-е" },
-      { time: "20:00", title: "Non-stop: 00-е" },
-      { time: "22:00", title: "Золотой запас" },
-      { time: "23:00", title: "Dancefloor" },
-    ],
-  },
-  {
-    day: "Вт", date: "7.07",
-    shows: [
-      { time: "00:00", title: "Полуночники" },
-      { time: "05:00", title: "Караоке на дому" },
-      { time: "07:00", title: "Утренний Будильник" },
-      { time: "09:00", title: "Архивные Файлы" },
-      { time: "10:00", title: "Золотая шкатулка" },
-      { time: "14:00", title: "Капсула Времени" },
-      { time: "15:00", title: "Битва исполнителей" },
-      { time: "16:00", title: "Крутой Хит" },
-      { time: "17:00", title: "Гламурные 00-е" },
-      { time: "19:00", title: "Non-stop: 10-е" },
-      { time: "20:00", title: "Non-stop: 00-е" },
-      { time: "22:00", title: "Dancefloor" },
-    ],
-  },
-  {
-    day: "Ср", date: "8.07",
-    shows: [
-      { time: "00:00", title: "Полуночники" },
-      { time: "05:00", title: "100% ЛЕТНИЙ ХИТ" },
-      { time: "07:00", title: "Утренний Будильник" },
-      { time: "09:00", title: "Архивные Файлы" },
-      { time: "10:00", title: "Победитель битвы" },
-      { time: "10:30", title: "Угадай клип по году" },
-      { time: "11:30", title: "Золотая шкатулка" },
-      { time: "14:00", title: "Назад в 1998-й!" },
-      { time: "15:00", title: "Битва исполнителей" },
-      { time: "16:00", title: "Где снимали этот клип?" },
-      { time: "17:00", title: "Гламурные 00-е" },
-      { time: "19:00", title: "Non-stop: 90-е" },
-      { time: "20:00", title: "Non-stop: 00-е" },
-      { time: "22:00", title: "Крутой Хит" },
-    ],
-  },
-  {
-    day: "Чт", date: "9.07",
-    shows: [
-      { time: "00:00", title: "Полуночники" },
-      { time: "05:00", title: "Золотая шкатулка" },
-      { time: "07:00", title: "Утренний Будильник" },
-      { time: "09:00", title: "100% ЛЕТНИЙ ХИТ" },
-      { time: "10:00", title: "Победитель битвы" },
-      { time: "10:30", title: "Миллениалы VS. Зумеры" },
-      { time: "11:30", title: "Назад в 1999-й!" },
-      { time: "13:00", title: "Капсула Времени" },
-      { time: "14:00", title: "Золотая шкатулка" },
-      { time: "15:00", title: "Битва исполнителей" },
-      { time: "16:00", title: "Музыкальная карта" },
-      { time: "17:00", title: "Гламурные 00-е" },
-      { time: "19:00", title: "Золотой пьедестал!" },
-      { time: "20:00", title: "Non-stop: 00-е" },
-      { time: "22:00", title: "Flashbacks: 10-е!" },
-    ],
-  },
-  {
-    day: "Пт", date: "10.07",
-    shows: [
-      { time: "00:00", title: "Полуночники" },
-      { time: "02:00", title: "18+ блок" },
-      { time: "03:00", title: "Полуночники" },
-      { time: "05:00", title: "Золотая шкатулка" },
-      { time: "07:00", title: "Утренний Будильник" },
-      { time: "09:00", title: "100% ЛЕТНИЙ ХИТ" },
-      { time: "10:00", title: "Победитель битвы" },
-      { time: "10:30", title: "Золотая шкатулка" },
-      { time: "14:00", title: "Музыкальный гороскоп" },
-      { time: "15:00", title: "Праздник в каждый дом" },
-      { time: "16:00", title: "Эволюция: Britney Spears" },
-      { time: "17:00", title: "Гламурные 00-е" },
-      { time: "19:00", title: "Non-stop: 10-е" },
-      { time: "20:00", title: "Non-stop: 00-е" },
-      { time: "22:00", title: "Dancefloor" },
-    ],
-  },
-  {
-    day: "Сб", date: "11.07",
-    shows: [
-      { time: "00:00", title: "Полуночники" },
-      { time: "06:00", title: "Золотой запас" },
-      { time: "07:00", title: "Утренний Будильник" },
-      { time: "09:00", title: "Золотая шкатулка" },
-      { time: "17:00", title: "Гламурные 00-е" },
-      { time: "20:00", title: "Non-stop: 00-е" },
-      { time: "23:00", title: "Dancefloor" },
-    ],
-  },
-  {
-    day: "Вс", date: "12.07",
-    shows: [
-      { time: "00:00", title: "Полуночники" },
-      { time: "03:00", title: "Золотой запас" },
-      { time: "07:00", title: "Утренний Будильник" },
-      { time: "09:00", title: "Золотая шкатулка" },
-      { time: "17:00", title: "Гламурные 00-е" },
-      { time: "20:00", title: "Non-stop: 00-е" },
-      { time: "22:00", title: "Non-stop: 10-е" },
-    ],
-  },
+const DAILY_SHOWS = [
+  { time: "00:00", title: "Non-Stop: Олдскул" },
+  { time: "06:00", title: "Non-Stop: Олдскул" },
+  { time: "12:00", title: "Non-Stop: Олдскул" },
+  { time: "18:00", title: "Non-Stop: Олдскул" },
+  { time: "23:00", title: "Non-Stop: Олдскул" },
 ];
+
+const WEEK = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((day) => ({
+  day,
+  shows: DAILY_SHOWS,
+}));
 
 const TAGS = ["70-е", "80-е", "90-е", "2000-е", "Хип-хоп", "Dancefloor", "и ещё"];
 
@@ -331,7 +216,6 @@ export default function Index() {
               onClick={() => setActiveDay(i)}
             >
               <span>{d.day}</span>
-              <span className="bento-tab-date">{d.date}</span>
             </button>
           ))}
         </div>
