@@ -26,7 +26,6 @@ const LiveStreamPlayer = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [finished, setFinished] = useState(false);
   const [initialOffset, setInitialOffset] = useState(0);
 
   useEffect(() => {
@@ -34,7 +33,6 @@ const LiveStreamPlayer = () => {
       .then((res) => res.json())
       .then((data: PlaylistResponse) => {
         setVideos(data.videos || []);
-        setFinished(!!data.finished);
         if (data.videos && data.videos.length > 0) {
           setCurrentIndex(data.current_index);
           firstIndexRef.current = data.current_index;
@@ -43,7 +41,7 @@ const LiveStreamPlayer = () => {
             const video = videoRef.current;
             if (video) {
               video.currentTime = data.offset_seconds;
-              if (!data.finished) video.play().catch(() => {});
+              video.play().catch(() => {});
             }
           });
         }
@@ -53,13 +51,7 @@ const LiveStreamPlayer = () => {
   }, []);
 
   const handleEnded = () => {
-    setCurrentIndex((prev) => {
-      if (prev + 1 >= videos.length) {
-        setFinished(true);
-        return prev;
-      }
-      return prev + 1;
-    });
+    setCurrentIndex((prev) => (prev + 1 >= videos.length ? 0 : prev + 1));
   };
 
   const current = videos[currentIndex];
@@ -74,13 +66,13 @@ const LiveStreamPlayer = () => {
   }, [currentIndex, videos.length, isVk]);
 
   useEffect(() => {
-    if (!isVk || finished || !current) return;
+    if (!isVk || !current) return;
     const offset = currentIndex === firstIndexRef.current ? initialOffset : 0;
     const remaining = Math.max(current.duration_seconds - offset, 1);
     const timeout = setTimeout(handleEnded, remaining * 1000);
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isVk, currentIndex, finished]);
+  }, [isVk, currentIndex]);
 
   if (loading) {
     return (
@@ -110,15 +102,8 @@ const LiveStreamPlayer = () => {
 
   return (
     <div className="bento-player-card bento-player-card--stream">
-      {finished && (
-        <div className="bento-player-overlay">
-          <div className="bento-player-icon">📺</div>
-          <h3>Эфир на сегодня завершён</h3>
-          <p>Новые видео скоро появятся — следите за обновлениями</p>
-        </div>
-      )}
       {isVk ? (
-        <div className="bento-player-vk-wrap" style={{ display: finished ? "none" : "block" }}>
+        <div className="bento-player-vk-wrap">
           <iframe
             key={current?.id}
             className="bento-player-video"
@@ -136,11 +121,10 @@ const LiveStreamPlayer = () => {
           ref={videoRef}
           className="bento-player-video"
           src={current?.file_url}
-          autoPlay={!finished}
+          autoPlay
           playsInline
           controls
           onEnded={handleEnded}
-          style={{ display: finished ? "none" : "block" }}
         />
       )}
     </div>

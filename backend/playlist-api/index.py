@@ -109,19 +109,14 @@ def get_playlist(include_all: bool = False):
     finished = False
 
     if total_duration > 0 and videos:
-        elapsed = now - start_ts
-        if elapsed >= total_duration:
-            finished = True
-            current_index = len(videos) - 1
-            offset_seconds = videos[-1]['duration_seconds']
-        else:
-            cumulative = 0.0
-            for i, v in enumerate(videos):
-                if cumulative + v['duration_seconds'] > elapsed:
-                    current_index = i
-                    offset_seconds = elapsed - cumulative
-                    break
-                cumulative += v['duration_seconds']
+        elapsed = (now - start_ts) % total_duration
+        cumulative = 0.0
+        for i, v in enumerate(videos):
+            if cumulative + v['duration_seconds'] > elapsed:
+                current_index = i
+                offset_seconds = elapsed - cumulative
+                break
+            cumulative += v['duration_seconds']
 
     return response(200, {
         'videos': videos,
