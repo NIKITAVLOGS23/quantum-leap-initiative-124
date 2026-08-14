@@ -19,11 +19,11 @@ interface Video {
 
 function parseVkVideoUrl(url: string): string | null {
   const trimmed = url.trim();
-  let match = trimmed.match(/vk\.com\/video(-?\d+)_(\d+)/i);
+  let match = trimmed.match(/(?:vk\.com|vkvideo\.ru)\/(?:video|clip)(-?\d+)_(\d+)/i);
   if (match) return `${match[1]}_${match[2]}`;
   match = trimmed.match(/[?&]oid=(-?\d+)&id=(\d+)/i);
   if (match) return `${match[1]}_${match[2]}`;
-  match = trimmed.match(/^(-?\d+)_(\d+)$/);
+  match = trimmed.match(/(-?\d+)_(\d+)/);
   if (match) return `${match[1]}_${match[2]}`;
   return null;
 }
