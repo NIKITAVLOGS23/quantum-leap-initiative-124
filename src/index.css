@@ -2010,6 +2010,7 @@ section:has(.schedule-grid)::before {
 }
 
 @media (max-width: 767px) {
+  .bento-player-vk-shield--top,
   .bento-player-vk-shield--bl,
   .bento-player-vk-shield--br {
     display: none;
