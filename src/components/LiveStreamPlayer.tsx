@@ -20,25 +20,96 @@ interface PlaylistResponse {
   finished: boolean;
 }
 
+interface Layer {
+  key: number;
+  video: Video;
+  offsetStart: number;
+}
+
+interface VideoLayerProps {
+  video: Video;
+  isTop: boolean;
+  isActiveVisual: boolean;
+  offsetStart: number;
+  muted: boolean;
+  onEnded: () => void;
+}
+
+const VideoLayer = ({ video, isTop, isActiveVisual, offsetStart, muted, onEnded }: VideoLayerProps) => {
+  const ref = useRef<HTMLVideoElement>(null);
+  const isVk = video.video_type === "vk";
+
+  useEffect(() => {
+    if (isVk) return;
+    const el = ref.current;
+    if (!el) return;
+    const onLoadedMetadata = () => {
+      if (offsetStart > 0) {
+        el.currentTime = offsetStart;
+      }
+      el.muted = muted;
+      el.play().catch(() => {});
+    };
+    el.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
+    el.load();
+    return () => {
+      el.removeEventListener("loadedmetadata", onLoadedMetadata);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (isVk) return;
+    const el = ref.current;
+    if (el) el.muted = muted;
+  }, [muted, isVk]);
+
+  return (
+    <div className={`bento-player-crossfade ${isActiveVisual ? "is-active" : ""}`}>
+      {isVk ? (
+        <div className="bento-player-vk-wrap">
+          <iframe
+            className="bento-player-video"
+            src={`${video.file_url}&autoplay=1`}
+            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+            allowFullScreen
+            frameBorder="0"
+            title={video.title || "GOLDTV — прямой эфир"}
+          />
+          <div className="bento-player-vk-shield bento-player-vk-shield--top" />
+          <div className="bento-player-vk-shield bento-player-vk-shield--bl" />
+          <div className="bento-player-vk-shield bento-player-vk-shield--br" />
+        </div>
+      ) : (
+        <video
+          ref={ref}
+          className="bento-player-video"
+          src={video.file_url}
+          playsInline
+          muted={muted}
+          controls
+          onEnded={isTop ? onEnded : undefined}
+        />
+      )}
+    </div>
+  );
+};
+
 const LiveStreamPlayer = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const layerSeqRef = useRef(0);
+  const startedRef = useRef(false);
   const firstIndexRef = useRef<number | null>(null);
-  const initialOffsetAppliedRef = useRef(false);
+  const vkOffsetUsedRef = useRef(false);
   const [videos, setVideos] = useState<Video[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [initialOffset, setInitialOffset] = useState(0);
   const [muted, setMuted] = useState(true);
+  const [layers, setLayers] = useState<Layer[]>([]);
+  const [activeKey, setActiveKey] = useState<number | null>(null);
 
   useEffect(() => {
-    const unmute = () => {
-      setMuted(false);
-      const video = videoRef.current;
-      if (video) {
-        video.muted = false;
-        video.play().catch(() => {});
-      }
-    };
+    const unmute = () => setMuted(false);
     window.addEventListener("pointerdown", unmute, { once: true });
     window.addEventListener("keydown", unmute, { once: true });
     return () => {
@@ -70,35 +141,29 @@ const LiveStreamPlayer = () => {
   const isVk = current?.video_type === "vk";
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || videos.length === 0 || isVk) return;
-
-    const isFirstLoad =
-      currentIndex === firstIndexRef.current && !initialOffsetAppliedRef.current;
-    const startOffset = isFirstLoad ? initialOffset : 0;
-
-    const onLoadedMetadata = () => {
-      if (startOffset > 0) {
-        video.currentTime = startOffset;
-      }
-      initialOffsetAppliedRef.current = true;
-      video.muted = muted;
-      video.play().catch(() => {});
-    };
-
-    video.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
-    video.muted = muted;
-    video.load();
-
-    return () => {
-      video.removeEventListener("loadedmetadata", onLoadedMetadata);
-    };
+    if (!current) return;
+    const key = ++layerSeqRef.current;
+    const offsetStart = !startedRef.current ? initialOffset : 0;
+    startedRef.current = true;
+    setLayers((prev) => [...prev, { key, video: current, offsetStart }]);
+    const raf = requestAnimationFrame(() => setActiveKey(key));
+    return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, videos.length, isVk]);
+  }, [currentIndex, videos.length]);
+
+  useEffect(() => {
+    if (activeKey === null) return;
+    const timer = setTimeout(() => {
+      setLayers((prev) => prev.filter((l) => l.key === activeKey));
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [activeKey]);
 
   useEffect(() => {
     if (!isVk || !current) return;
-    const offset = currentIndex === firstIndexRef.current ? initialOffset : 0;
+    const offset =
+      currentIndex === firstIndexRef.current && !vkOffsetUsedRef.current ? initialOffset : 0;
+    vkOffsetUsedRef.current = true;
     const remaining = Math.max(current.duration_seconds - offset, 1);
     const timeout = setTimeout(handleEnded, remaining * 1000);
     return () => clearTimeout(timeout);
@@ -131,35 +196,23 @@ const LiveStreamPlayer = () => {
     );
   }
 
+  const topKey = layers.length > 0 ? layers[layers.length - 1].key : null;
+
   return (
     <div className="bento-player-card bento-player-card--stream">
-      {isVk ? (
-        <div className="bento-player-vk-wrap">
-          <iframe
-            key={current?.id}
-            className="bento-player-video"
-            src={`${current?.file_url}&autoplay=1`}
-            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-            allowFullScreen
-            frameBorder="0"
-            title={current?.title || "GOLDTV — прямой эфир"}
+      <div className="bento-player-stage">
+        {layers.map((l) => (
+          <VideoLayer
+            key={l.key}
+            video={l.video}
+            isTop={l.key === topKey}
+            isActiveVisual={l.key === activeKey}
+            offsetStart={l.offsetStart}
+            muted={muted}
+            onEnded={handleEnded}
           />
-          <div className="bento-player-vk-shield bento-player-vk-shield--top" />
-          <div className="bento-player-vk-shield bento-player-vk-shield--bl" />
-          <div className="bento-player-vk-shield bento-player-vk-shield--br" />
-        </div>
-      ) : (
-        <video
-          ref={videoRef}
-          className="bento-player-video"
-          src={current?.file_url}
-          autoPlay
-          playsInline
-          muted={muted}
-          controls
-          onEnded={handleEnded}
-        />
-      )}
+        ))}
+      </div>
     </div>
   );
 };
