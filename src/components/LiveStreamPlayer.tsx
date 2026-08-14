@@ -113,7 +113,8 @@ const LiveStreamPlayer = () => {
             frameBorder="0"
             title={current?.title || "GOLDTV — прямой эфир"}
           />
-          <div className="bento-player-vk-shield bento-player-vk-shield--tl" />
+          <div className="bento-player-vk-shield bento-player-vk-shield--top" />
+          <div className="bento-player-vk-shield bento-player-vk-shield--bl" />
           <div className="bento-player-vk-shield bento-player-vk-shield--br" />
         </div>
       ) : (
