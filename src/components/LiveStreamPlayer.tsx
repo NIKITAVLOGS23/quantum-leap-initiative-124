@@ -23,6 +23,7 @@ interface PlaylistResponse {
 const LiveStreamPlayer = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const firstIndexRef = useRef<number | null>(null);
+  const initialOffsetAppliedRef = useRef(false);
   const [videos, setVideos] = useState<Video[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -55,13 +56,6 @@ const LiveStreamPlayer = () => {
           setCurrentIndex(data.current_index);
           firstIndexRef.current = data.current_index;
           setInitialOffset(data.offset_seconds || 0);
-          requestAnimationFrame(() => {
-            const video = videoRef.current;
-            if (video) {
-              video.currentTime = data.offset_seconds;
-              video.play().catch(() => {});
-            }
-          });
         }
       })
       .catch(() => {})
@@ -77,11 +71,28 @@ const LiveStreamPlayer = () => {
 
   useEffect(() => {
     const video = videoRef.current;
-    if (video && videos.length > 0 && !isVk) {
+    if (!video || videos.length === 0 || isVk) return;
+
+    const isFirstLoad =
+      currentIndex === firstIndexRef.current && !initialOffsetAppliedRef.current;
+    const startOffset = isFirstLoad ? initialOffset : 0;
+
+    const onLoadedMetadata = () => {
+      if (startOffset > 0) {
+        video.currentTime = startOffset;
+      }
+      initialOffsetAppliedRef.current = true;
       video.muted = muted;
-      video.load();
       video.play().catch(() => {});
-    }
+    };
+
+    video.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
+    video.muted = muted;
+    video.load();
+
+    return () => {
+      video.removeEventListener("loadedmetadata", onLoadedMetadata);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, videos.length, isVk]);
 
