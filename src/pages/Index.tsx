@@ -200,7 +200,9 @@ export default function Index() {
           <h2 className="bento-section-title">ПРЯМОЙ ЭФИР</h2>
           <span className="bento-live-badge">● LIVE</span>
         </div>
-        <LiveStreamPlayer />
+        <div className="bento-player-stream-wrap">
+          <LiveStreamPlayer />
+        </div>
       </section>
 
       {/* ── SCHEDULE ── */}
