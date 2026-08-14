@@ -195,8 +195,8 @@ export default function Index() {
       </div>
 
       {/* ── PLAYER ── */}
-      <section id="player" ref={refPlayer} className="bento-section fade-in">
-        <div className="bento-section-header">
+      <section id="player" ref={refPlayer} className="bento-section bento-section--player fade-in">
+        <div className="bento-section-header bento-section-header--player">
           <h2 className="bento-section-title">ПРЯМОЙ ЭФИР</h2>
           <span className="bento-live-badge">● LIVE</span>
         </div>
