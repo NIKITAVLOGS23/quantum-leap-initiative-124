@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Icon from "@/components/ui/icon";
 
 const PLAYLIST_API = "https://functions.poehali.dev/f53e4fe3-cb91-4242-9d46-36eb7f1f83da";
 const VK_OID = "-204767982";
@@ -100,6 +101,7 @@ const LiveStreamPlayer = () => {
   const startedRef = useRef(false);
   const firstIndexRef = useRef<number | null>(null);
   const vkOffsetUsedRef = useRef(false);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -107,6 +109,25 @@ const LiveStreamPlayer = () => {
   const [muted, setMuted] = useState(true);
   const [layers, setLayers] = useState<Layer[]>([]);
   const [activeKey, setActiveKey] = useState<number | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const onFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", onFsChange);
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    const el = stageRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else {
+      el.requestFullscreen().catch(() => {});
+    }
+  };
 
   useEffect(() => {
     const unmute = () => setMuted(false);
@@ -200,7 +221,7 @@ const LiveStreamPlayer = () => {
 
   return (
     <div className="bento-player-card bento-player-card--stream">
-      <div className="bento-player-stage">
+      <div ref={stageRef} className="bento-player-stage">
         {layers.map((l) => (
           <VideoLayer
             key={l.key}
@@ -212,6 +233,14 @@ const LiveStreamPlayer = () => {
             onEnded={handleEnded}
           />
         ))}
+        <button
+          type="button"
+          className="bento-player-fullscreen-btn"
+          onClick={toggleFullscreen}
+          aria-label={isFullscreen ? "Свернуть полноэкранный режим" : "Развернуть на весь экран"}
+        >
+          <Icon name={isFullscreen ? "Minimize" : "Maximize"} size={18} />
+        </button>
       </div>
     </div>
   );

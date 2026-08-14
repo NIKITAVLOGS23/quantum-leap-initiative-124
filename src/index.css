@@ -1997,6 +1997,35 @@ section:has(.schedule-grid)::before {
   pointer-events: auto;
 }
 
+.bento-player-stage:fullscreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.bento-player-fullscreen-btn {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 5;
+  transition: background 0.2s;
+}
+
+.bento-player-fullscreen-btn:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
 .bento-player-vk-shield {
   position: absolute;
   z-index: 3;
