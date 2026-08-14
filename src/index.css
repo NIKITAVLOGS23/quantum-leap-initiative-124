@@ -2009,6 +2009,16 @@ section:has(.schedule-grid)::before {
   height: 14%;
 }
 
+@media (max-width: 767px) {
+  .bento-player-vk-shield--bl {
+    width: 72%;
+  }
+
+  .bento-player-vk-shield--br {
+    width: 20%;
+  }
+}
+
 .bento-player-overlay {
   position: absolute;
   inset: 0;
