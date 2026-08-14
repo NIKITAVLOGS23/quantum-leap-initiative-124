@@ -118,16 +118,19 @@ const LiveStreamPlayer = () => {
         </div>
       )}
       {isVk ? (
-        <iframe
-          key={current?.id}
-          className="bento-player-video"
-          src={`${current?.file_url}&autoplay=1`}
-          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-          allowFullScreen
-          frameBorder="0"
-          title={current?.title || "GOLDTV — прямой эфир"}
-          style={{ display: finished ? "none" : "block" }}
-        />
+        <div className="bento-player-vk-wrap" style={{ display: finished ? "none" : "block" }}>
+          <iframe
+            key={current?.id}
+            className="bento-player-video"
+            src={`${current?.file_url}&autoplay=1`}
+            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+            allowFullScreen
+            frameBorder="0"
+            title={current?.title || "GOLDTV — прямой эфир"}
+          />
+          <div className="bento-player-vk-shield bento-player-vk-shield--tl" />
+          <div className="bento-player-vk-shield bento-player-vk-shield--br" />
+        </div>
       ) : (
         <video
           ref={videoRef}
