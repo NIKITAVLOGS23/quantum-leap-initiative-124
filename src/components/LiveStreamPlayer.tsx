@@ -27,6 +27,24 @@ const LiveStreamPlayer = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [initialOffset, setInitialOffset] = useState(0);
+  const [muted, setMuted] = useState(true);
+
+  useEffect(() => {
+    const unmute = () => {
+      setMuted(false);
+      const video = videoRef.current;
+      if (video) {
+        video.muted = false;
+        video.play().catch(() => {});
+      }
+    };
+    window.addEventListener("pointerdown", unmute, { once: true });
+    window.addEventListener("keydown", unmute, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", unmute);
+      window.removeEventListener("keydown", unmute);
+    };
+  }, []);
 
   useEffect(() => {
     fetch(`${PLAYLIST_API}?action=playlist`)
@@ -60,9 +78,11 @@ const LiveStreamPlayer = () => {
   useEffect(() => {
     const video = videoRef.current;
     if (video && videos.length > 0 && !isVk) {
+      video.muted = muted;
       video.load();
       video.play().catch(() => {});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, videos.length, isVk]);
 
   useEffect(() => {
@@ -124,6 +144,7 @@ const LiveStreamPlayer = () => {
           src={current?.file_url}
           autoPlay
           playsInline
+          muted={muted}
           controls
           onEnded={handleEnded}
         />
