@@ -2105,6 +2105,10 @@ section:has(.schedule-grid)::before {
   video.bento-player-video::-webkit-media-controls {
     display: none !important;
   }
+
+  .bento-player-vk-wrap {
+    pointer-events: auto;
+  }
 }
 
 .bento-player-vk-shield {
@@ -2138,14 +2142,11 @@ section:has(.schedule-grid)::before {
 
 @media (max-width: 767px) {
   .bento-player-vk-shield--top {
-    height: 80%;
+    width: 100%;
+    height: 50%;
   }
 
-  .bento-player-vk-shield--bl {
-    width: 78%;
-    height: 20%;
-  }
-
+  .bento-player-vk-shield--bl,
   .bento-player-vk-shield--br {
     display: none;
   }
