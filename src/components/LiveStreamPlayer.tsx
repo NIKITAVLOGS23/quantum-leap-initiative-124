@@ -130,16 +130,6 @@ const LiveStreamPlayer = () => {
   };
 
   useEffect(() => {
-    const unmute = () => setMuted(false);
-    window.addEventListener("pointerdown", unmute, { once: true });
-    window.addEventListener("keydown", unmute, { once: true });
-    return () => {
-      window.removeEventListener("pointerdown", unmute);
-      window.removeEventListener("keydown", unmute);
-    };
-  }, []);
-
-  useEffect(() => {
     fetch(`${PLAYLIST_API}?action=playlist`)
       .then((res) => res.json())
       .then((data: PlaylistResponse) => {
@@ -240,6 +230,14 @@ const LiveStreamPlayer = () => {
           aria-label={isFullscreen ? "Свернуть полноэкранный режим" : "Развернуть на весь экран"}
         >
           <Icon name={isFullscreen ? "Minimize" : "Maximize"} size={18} />
+        </button>
+        <button
+          type="button"
+          className="bento-player-sound-btn"
+          onClick={() => setMuted((m) => !m)}
+          aria-label={muted ? "Включить звук" : "Выключить звук"}
+        >
+          <Icon name={muted ? "VolumeX" : "Volume2"} size={20} />
         </button>
       </div>
     </div>

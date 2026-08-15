@@ -2065,6 +2065,43 @@ section:has(.schedule-grid)::before {
   background: rgba(0, 0, 0, 0.85);
 }
 
+.bento-player-sound-btn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 6;
+  transition: background 0.2s;
+}
+
+.bento-player-sound-btn:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+@media (max-width: 767px) {
+  .bento-player-crossfade,
+  .bento-player-fullscreen-btn {
+    pointer-events: none;
+  }
+
+  .bento-player-sound-btn {
+    pointer-events: auto;
+  }
+
+  .bento-player-video::-webkit-media-controls {
+    display: none !important;
+  }
+}
+
 .bento-player-vk-shield {
   position: absolute;
   z-index: 3;
