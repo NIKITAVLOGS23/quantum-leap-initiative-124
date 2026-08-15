@@ -2089,12 +2089,17 @@ section:has(.schedule-grid)::before {
 
 @media (max-width: 767px) {
   .bento-player-crossfade,
+  .bento-player-crossfade.is-active,
   .bento-player-fullscreen-btn {
     pointer-events: none;
   }
 
   .bento-player-sound-btn {
     pointer-events: auto;
+  }
+
+  .bento-player-video {
+    pointer-events: none;
   }
 
   .bento-player-video::-webkit-media-controls {

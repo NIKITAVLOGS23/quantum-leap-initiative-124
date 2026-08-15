@@ -39,6 +39,15 @@ interface VideoLayerProps {
 const VideoLayer = ({ video, isTop, isActiveVisual, offsetStart, muted, onEnded }: VideoLayerProps) => {
   const ref = useRef<HTMLVideoElement>(null);
   const isVk = video.video_type === "vk";
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     if (isVk) return;
@@ -88,7 +97,7 @@ const VideoLayer = ({ video, isTop, isActiveVisual, offsetStart, muted, onEnded 
           src={video.file_url}
           playsInline
           muted={muted}
-          controls
+          controls={!isMobile}
           onEnded={isTop ? onEnded : undefined}
         />
       )}
