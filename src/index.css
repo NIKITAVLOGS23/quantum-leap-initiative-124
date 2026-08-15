@@ -2098,11 +2098,11 @@ section:has(.schedule-grid)::before {
     pointer-events: auto;
   }
 
-  .bento-player-video {
+  video.bento-player-video {
     pointer-events: none;
   }
 
-  .bento-player-video::-webkit-media-controls {
+  video.bento-player-video::-webkit-media-controls {
     display: none !important;
   }
 }
@@ -2137,8 +2137,15 @@ section:has(.schedule-grid)::before {
 }
 
 @media (max-width: 767px) {
-  .bento-player-vk-shield--top,
-  .bento-player-vk-shield--bl,
+  .bento-player-vk-shield--top {
+    height: 80%;
+  }
+
+  .bento-player-vk-shield--bl {
+    width: 78%;
+    height: 20%;
+  }
+
   .bento-player-vk-shield--br {
     display: none;
   }
