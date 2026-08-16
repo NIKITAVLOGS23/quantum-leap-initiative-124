@@ -14,7 +14,7 @@ interface Video {
   duration_seconds: number;
   sort_order: number;
   is_external?: boolean;
-  video_type?: "file" | "link" | "vk";
+  video_type?: "file" | "link" | "vk" | "kinescope";
 }
 
 function parseVkVideoUrl(url: string): string | null {
@@ -25,6 +25,15 @@ function parseVkVideoUrl(url: string): string | null {
   if (match) return `${match[1]}_${match[2]}`;
   match = trimmed.match(/(-?\d+)_(\d+)/);
   if (match) return `${match[1]}_${match[2]}`;
+  return null;
+}
+
+function parseKinescopeId(url: string): string | null {
+  const trimmed = url.trim();
+  let match = trimmed.match(/kinescope\.io\/(?:embed\/)?([a-zA-Z0-9]+)/i);
+  if (match) return match[1];
+  match = trimmed.match(/^[a-zA-Z0-9]{10,}$/);
+  if (match) return trimmed;
   return null;
 }
 
@@ -70,7 +79,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [uploads, setUploads] = useState<{ name: string; progress: number }[]>([]);
   const [dragOver, setDragOver] = useState(false);
-  const [addMode, setAddMode] = useState<"file" | "link" | "vk">("file");
+  const [addMode, setAddMode] = useState<"file" | "link" | "vk" | "kinescope">("file");
   const [linkTitle, setLinkTitle] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [linkMinutes, setLinkMinutes] = useState("");
@@ -81,6 +90,11 @@ const Admin = () => {
   const [vkMinutes, setVkMinutes] = useState("");
   const [vkSeconds, setVkSeconds] = useState("");
   const [vkSubmitting, setVkSubmitting] = useState(false);
+  const [kinescopeTitle, setKinescopeTitle] = useState("");
+  const [kinescopeUrl, setKinescopeUrl] = useState("");
+  const [kinescopeMinutes, setKinescopeMinutes] = useState("");
+  const [kinescopeSeconds, setKinescopeSeconds] = useState("");
+  const [kinescopeSubmitting, setKinescopeSubmitting] = useState(false);
   const dragIndex = useRef<number | null>(null);
 
   useEffect(() => {
@@ -346,6 +360,59 @@ const Admin = () => {
     }
   };
 
+  const handleAddKinescope = async () => {
+    const title = kinescopeTitle.trim();
+    const url = kinescopeUrl.trim();
+    const minutes = parseInt(kinescopeMinutes || "0", 10) || 0;
+    const seconds = parseInt(kinescopeSeconds || "0", 10) || 0;
+    const duration = minutes * 60 + seconds;
+
+    if (!title) {
+      toast.error("Укажи название видео");
+      return;
+    }
+    const videoId = parseKinescopeId(url);
+    if (!videoId) {
+      toast.error("Не удалось распознать ссылку или ID видео Kinescope");
+      return;
+    }
+    if (duration <= 0) {
+      toast.error("Укажи длительность видео больше 0");
+      return;
+    }
+
+    setKinescopeSubmitting(true);
+    try {
+      const embedUrl = `https://kinescope.io/embed/${videoId}`;
+      const addRes = await fetch(PLAYLIST_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add",
+          password,
+          title,
+          file_key: `kinescope-${videoId}`,
+          file_url: embedUrl,
+          duration_seconds: duration,
+          video_type: "kinescope",
+        }),
+      });
+      const addData = await addRes.json();
+      if (!addRes.ok) throw new Error(addData.error || "Ошибка добавления");
+
+      setVideos((prev) => [...prev, addData.video]);
+      toast.success(`${title} добавлено в эфир`);
+      setKinescopeTitle("");
+      setKinescopeUrl("");
+      setKinescopeMinutes("");
+      setKinescopeSeconds("");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Ошибка добавления видео из Kinescope");
+    } finally {
+      setKinescopeSubmitting(false);
+    }
+  };
+
   const handleDelete = async (id: number) => {
     if (!confirm("Удалить это видео из эфира?")) return;
     try {
@@ -458,6 +525,14 @@ const Admin = () => {
           <Icon name="Play" size={16} />
           Добавить из VK
         </button>
+        <button
+          type="button"
+          className={`admin-add-tab${addMode === "kinescope" ? " admin-add-tab--active" : ""}`}
+          onClick={() => setAddMode("kinescope")}
+        >
+          <Icon name="Video" size={16} />
+          Добавить из Kinescope
+        </button>
       </div>
 
       {addMode === "file" ? (
@@ -529,7 +604,7 @@ const Admin = () => {
             {linkSubmitting ? "Добавление…" : "Добавить в эфир"}
           </Button>
         </div>
-      ) : (
+      ) : addMode === "vk" ? (
         <div className="admin-link-form">
           <div className="admin-link-field">
             <label>Название видео</label>
@@ -578,6 +653,55 @@ const Admin = () => {
             {vkSubmitting ? "Добавление…" : "Добавить в эфир"}
           </Button>
         </div>
+      ) : (
+        <div className="admin-link-form">
+          <div className="admin-link-field">
+            <label>Название видео</label>
+            <Input
+              placeholder="Например: Выпуск №12"
+              value={kinescopeTitle}
+              onChange={(e) => setKinescopeTitle(e.target.value)}
+            />
+          </div>
+
+          <div className="admin-link-field">
+            <label>Ссылка на видео Kinescope</label>
+            <Input
+              placeholder="https://kinescope.io/embed/xxxxxxxxxxxxxxxxxxxxxx"
+              value={kinescopeUrl}
+              onChange={(e) => setKinescopeUrl(e.target.value)}
+            />
+            <span className="admin-link-hint">
+              Вставь ссылку на видео из Kinescope (или просто ID видео) — можно скопировать её из embed-кода в личном кабинете Kinescope. Показываться будет через плеер Kinescope, друг за другом с остальными видео в эфире.
+            </span>
+          </div>
+
+          <div className="admin-link-field">
+            <label>Длительность</label>
+            <div className="admin-link-duration">
+              <Input
+                type="number"
+                min={0}
+                placeholder="мин"
+                value={kinescopeMinutes}
+                onChange={(e) => setKinescopeMinutes(e.target.value)}
+              />
+              <span>:</span>
+              <Input
+                type="number"
+                min={0}
+                max={59}
+                placeholder="сек"
+                value={kinescopeSeconds}
+                onChange={(e) => setKinescopeSeconds(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <Button onClick={handleAddKinescope} disabled={kinescopeSubmitting}>
+            {kinescopeSubmitting ? "Добавление…" : "Добавить в эфир"}
+          </Button>
+        </div>
       )}
 
       {uploads.length > 0 && (
@@ -618,6 +742,7 @@ const Admin = () => {
               <span className="admin-item-num">{i + 1}</span>
               {v.video_type === "vk" && <Icon name="Play" size={14} className="admin-item-badge" />}
               {v.video_type === "link" && <Icon name="Link" size={14} className="admin-item-badge" />}
+              {v.video_type === "kinescope" && <Icon name="Video" size={14} className="admin-item-badge" />}
               <span className="admin-item-title">{v.title}</span>
               <span className="admin-item-duration">{formatDuration(v.duration_seconds)}</span>
               <button className="admin-item-delete" onClick={() => handleDelete(v.id)}>

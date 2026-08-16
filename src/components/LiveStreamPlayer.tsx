@@ -11,7 +11,7 @@ interface Video {
   title: string;
   file_url: string;
   duration_seconds: number;
-  video_type?: "file" | "link" | "vk";
+  video_type?: "file" | "link" | "vk" | "kinescope";
 }
 
 interface PlaylistResponse {
@@ -39,6 +39,8 @@ interface VideoLayerProps {
 const VideoLayer = ({ video, isTop, isActiveVisual, offsetStart, muted, onEnded }: VideoLayerProps) => {
   const ref = useRef<HTMLVideoElement>(null);
   const isVk = video.video_type === "vk";
+  const isKinescope = video.video_type === "kinescope";
+  const isEmbed = isVk || isKinescope;
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const VideoLayer = ({ video, isTop, isActiveVisual, offsetStart, muted, onEnded 
   }, []);
 
   useEffect(() => {
-    if (isVk) return;
+    if (isEmbed) return;
     const el = ref.current;
     if (!el) return;
     const onLoadedMetadata = () => {
@@ -69,18 +71,18 @@ const VideoLayer = ({ video, isTop, isActiveVisual, offsetStart, muted, onEnded 
   }, []);
 
   useEffect(() => {
-    if (isVk) return;
+    if (isEmbed) return;
     const el = ref.current;
     if (el) el.muted = muted;
-  }, [muted, isVk]);
+  }, [muted, isEmbed]);
 
   return (
     <div className={`bento-player-crossfade ${isActiveVisual ? "is-active" : ""}`}>
-      {isVk ? (
+      {isEmbed ? (
         <div className="bento-player-vk-wrap">
           <iframe
             className="bento-player-video"
-            src={`${video.file_url}&autoplay=1`}
+            src={`${video.file_url}${video.file_url.includes("?") ? "&" : "?"}autoplay=1`}
             allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
             allowFullScreen
             frameBorder="0"
@@ -158,7 +160,7 @@ const LiveStreamPlayer = () => {
   };
 
   const current = videos[currentIndex];
-  const isVk = current?.video_type === "vk";
+  const isEmbedVideo = current?.video_type === "vk" || current?.video_type === "kinescope";
 
   useEffect(() => {
     if (!current) return;
@@ -180,7 +182,7 @@ const LiveStreamPlayer = () => {
   }, [activeKey]);
 
   useEffect(() => {
-    if (!isVk || !current) return;
+    if (!isEmbedVideo || !current) return;
     const offset =
       currentIndex === firstIndexRef.current && !vkOffsetUsedRef.current ? initialOffset : 0;
     vkOffsetUsedRef.current = true;
@@ -188,7 +190,7 @@ const LiveStreamPlayer = () => {
     const timeout = setTimeout(handleEnded, remaining * 1000);
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isVk, currentIndex]);
+  }, [isEmbedVideo, currentIndex]);
 
   if (loading) {
     return (
