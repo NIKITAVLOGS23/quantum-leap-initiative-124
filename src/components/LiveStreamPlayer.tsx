@@ -3,7 +3,7 @@ import Icon from "@/components/ui/icon";
 
 const PLAYLIST_API = "https://functions.poehali.dev/f53e4fe3-cb91-4242-9d46-36eb7f1f83da";
 const VK_OID = "-204767982";
-const VK_ID = "456239111";
+const VK_ID = "456239113";
 const VK_EMBED_URL = `https://vk.com/video_ext.php?oid=${VK_OID}&id=${VK_ID}&hd=2&autoplay=1`;
 
 interface Video {
